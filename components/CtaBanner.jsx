@@ -53,11 +53,10 @@ export default function CtaBanner({
       {/* Background Architectural Facility Image - Full Width Span */}
       <div className="absolute inset-0 w-full h-full pointer-events-none select-none z-0">
         <div
-          className={`absolute inset-0 w-full h-full transition-all duration-1000 ease-out ${
-            isVisible
+          className={`absolute inset-0 w-full h-full transition-all duration-1000 ease-out ${isVisible
               ? "opacity-100 scale-100"
               : "opacity-0 scale-105"
-          }`}
+            }`}
         >
           <Image
             src={backgroundImage}

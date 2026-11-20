@@ -60,8 +60,8 @@ export const industrialSlides = [
       { icon: Truck, label: "24h Pune Dispatch" },
       { icon: Wrench, label: "On-Site Commissioning" },
     ],
-    bgImage: "/images/.webp",
-    mobileImage: "/images/1slide_mobile.webp",
+    bgImage: "/images/industrial-hero-desktop.webp",
+    mobileImage: "/images/industrial-hero-mobile.jpg",
     alt: "LOVOKIT Industrial Hub - Turnkey Industrial Test, Measurement & Automation.",
   },
   {
@@ -81,7 +81,7 @@ export const industrialSlides = [
       { icon: Headphones, label: "Field Engineers" },
     ],
     bgImage: "/images/2slide.webp",
-    mobileImage: "/images/2slide_mobile.webp",
+    mobileImage: "/images/m2.png",
     alt: "LOVOKIT Advanced Powertrain & Inverter Diagnostic Benches.",
   },
   {
@@ -101,7 +101,7 @@ export const industrialSlides = [
       { icon: ShieldCheck, label: "Student Protected" },
     ],
     bgImage: "/images/3slide.webp",
-    mobileImage: "/images/3slide_mobile.webp",
+    mobileImage: "/images/m3.png",
     alt: "LOVOKIT Turnkey Lab Solutions for Institutes & Universities.",
   },
 ];
@@ -499,30 +499,8 @@ export default function IndustrialHubPage() {
           ))}
         </div>
 
-        {/* 2. Mobile Top Image Display (Zero Cutting Edge, Perfectly Contained) */}
-        <div className="sm:hidden relative w-full h-[220px] xs:h-[260px] bg-white border-b border-slate-100 overflow-hidden flex items-center justify-center p-2">
-          {industrialSlides.map((slide, idx) => (
-            <div
-              key={`mobile-img-${slide.id}`}
-              className={`absolute inset-0 w-full h-full transition-opacity duration-500 ease-in-out p-1.5 flex items-center justify-center ${idx === currentSlide ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"
-                }`}
-            >
-              <Image
-                src={slide.mobileImage || slide.bgImage}
-                alt={slide.alt}
-                fill
-                priority={true}
-                loading="eager"
-                unoptimized
-                sizes="100vw"
-                className="object-contain object-center select-none"
-              />
-            </div>
-          ))}
-        </div>
-
-        {/* 3. Main Content Container (Phir neeche left side mein ye sab text wagaira rakho) */}
-        <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 pt-5 pb-16 sm:py-10 lg:py-12 relative z-10">
+        {/* 2. Main Content Container (Text, Heading, Buttons & Badges on top) */}
+        <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 pt-5 pb-2 sm:py-10 lg:py-12 relative z-10">
           {industrialSlides.map((slide, idx) => {
             if (idx !== currentSlide) return null;
             return (
@@ -605,6 +583,30 @@ export default function IndustrialHubPage() {
           })}
         </div>
 
+        {/* 3. Mobile Rounded Image Card Display (Below text, matching Home Page) */}
+        <div className="sm:hidden px-4 pt-3 pb-2 w-full relative z-10">
+          <div className="relative w-full h-[230px] xs:h-[270px] rounded-[22px] overflow-hidden bg-white border border-slate-200/80 shadow-[0_8px_25px_rgba(0,0,0,0.08)]">
+            {industrialSlides.map((slide, idx) => (
+              <div
+                key={`mobile-img-${slide.id}`}
+                className={`absolute inset-0 w-full h-full transition-opacity duration-500 ease-in-out ${idx === currentSlide ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"
+                  }`}
+              >
+                <Image
+                  src={slide.mobileImage || slide.bgImage}
+                  alt={slide.alt}
+                  fill
+                  priority={true}
+                  loading="eager"
+                  unoptimized
+                  sizes="100vw"
+                  className="object-cover object-center select-none"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* 4. Desktop Slider Navigation Controls */}
         <button
           onClick={goToPrev}
@@ -637,12 +639,12 @@ export default function IndustrialHubPage() {
           ))}
         </div>
 
-        {/* 6. Mobile Bottom Slider Bar (< ••• >) matching reference image */}
-        <div className="sm:hidden absolute bottom-3.5 left-1/2 -translate-x-1/2 flex items-center gap-3 z-30">
+        {/* 6. Mobile Bottom Slider Bar (< ••• >) directly below image card */}
+        <div className="sm:hidden w-full flex items-center justify-center gap-3 pt-3 pb-6 relative z-30">
           <button
             onClick={goToPrev}
             aria-label="Previous Slide"
-            className="w-7 h-7 rounded-full bg-slate-900/60 hover:bg-slate-900 text-white flex items-center justify-center transition-all active:scale-90 cursor-pointer"
+            className="w-8 h-8 rounded-full bg-slate-800 hover:bg-[#FFC400] hover:text-black text-white flex items-center justify-center transition-all active:scale-90 cursor-pointer shadow-sm"
           >
             <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
           </button>
@@ -654,8 +656,8 @@ export default function IndustrialHubPage() {
                 onClick={() => setCurrentSlide(idx)}
                 aria-label={`Go to slide ${idx + 1}`}
                 className={`transition-all duration-300 cursor-pointer ${idx === currentSlide
-                    ? "w-5 h-1.5 rounded-full bg-[#FFC400] shadow-xs"
-                    : "w-1.5 h-1.5 rounded-full bg-slate-300 hover:bg-slate-400"
+                    ? "w-6 h-2 rounded-full bg-[#FFC400] shadow-xs"
+                    : "w-2 h-2 rounded-full bg-slate-300 hover:bg-slate-400"
                   }`}
               />
             ))}
@@ -664,7 +666,7 @@ export default function IndustrialHubPage() {
           <button
             onClick={goToNext}
             aria-label="Next Slide"
-            className="w-7 h-7 rounded-full bg-slate-900/60 hover:bg-slate-900 text-white flex items-center justify-center transition-all active:scale-90 cursor-pointer"
+            className="w-8 h-8 rounded-full bg-slate-800 hover:bg-[#FFC400] hover:text-black text-white flex items-center justify-center transition-all active:scale-90 cursor-pointer shadow-sm"
           >
             <ChevronRight className="w-4 h-4 stroke-[2.5]" />
           </button>
