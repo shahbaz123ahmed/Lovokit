@@ -333,218 +333,214 @@ export default function ProductDetailClient({ product, relatedProducts }) {
               </div>
             </div>
 
-            {/* Right Column: Title, Ratings, Pricing, Specs & RFQ Actions */}
-            <div className="lg:col-span-6 flex flex-col justify-between">
-              <div>
-                {/* Category & Status */}
-                <div className="flex items-center justify-between gap-2 mb-2">
-                  <span className="text-xs font-black uppercase tracking-widest text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
+            {/* Right Column: Title, Ratings, Minimal Pricing, Specs & Actions */}
+            <div className="lg:col-span-6 flex flex-col justify-start space-y-4">
+              {/* Category, SKU & In-Stock Status */}
+              <div className="flex items-center justify-between gap-3 text-xs flex-wrap">
+                <div className="flex items-center gap-2">
+                  <span className="font-extrabold uppercase tracking-wider text-slate-900 bg-slate-100 px-2.5 py-1 rounded-md text-[11px]">
                     {product.categoryName}
                   </span>
-                  <span className="text-xs text-gray-500 font-mono font-bold">
+                  <span className="text-slate-400 font-mono text-[11px]">
                     SKU: LVK-{product.model}
                   </span>
                 </div>
 
-                {/* Main Heading */}
-                <h1 className="text-2xl sm:text-3xl lg:text-[2.25rem] font-black tracking-tight text-slate-950 leading-tight">
-                  <span className="text-black font-black block sm:inline">
-                    {product.brand} {product.model}
-                  </span>{" "}
-                  <span className="font-bold text-gray-700 block text-lg sm:text-xl lg:text-2xl mt-1">
-                    {product.title}
-                  </span>
+                <div className="flex items-center gap-1.5 text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full text-[11px] font-bold border border-emerald-200/80">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>In Stock</span>
+                </div>
+              </div>
+
+              {/* Main Heading & Subtitle */}
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-950 leading-tight">
+                  {product.brand} {product.model}
                 </h1>
-
-                {/* Rating & Procurement Verification */}
-                <div className="flex items-center gap-3 mt-2.5">
-                  <div className="flex items-center gap-0.5 text-amber-400">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                    ))}
-                  </div>
-                  <span className="text-xs font-bold text-slate-700">
-                    {product.rating || 5.0}
-                  </span>
-                  <span className="text-xs text-slate-400">•</span>
-                  <span className="text-xs text-slate-500 font-medium">
-                    {product.reviews || 48} Laboratory Audits &amp; Reviews
-                  </span>
-                  <span className="text-xs text-slate-400 hidden sm:inline">•</span>
-                  <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200 hidden sm:inline-block">
-                    Procurement Verified
-                  </span>
-                </div>
-
-                {/* Description */}
-                <p className="mt-3 text-xs sm:text-sm text-gray-600 leading-relaxed">
-                  {product.description}
+                <p className="text-sm sm:text-base font-semibold text-slate-600 mt-1 leading-snug">
+                  {product.title}
                 </p>
+              </div>
 
-                {/* B2B Industrial Pricing Box */}
-                <div className="mt-5 p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-amber-50/50 via-white to-amber-50/30 text-slate-900 border border-amber-200/90 shadow-xs">
-                  <div className="flex items-baseline justify-between gap-2 flex-wrap">
-                    <div>
-                      <span className="text-[10.5px] font-black uppercase tracking-wider text-amber-800 block mb-0.5">
-                        INSTITUTIONAL &amp; B2B RATE
-                      </span>
-                      <div className="flex items-baseline gap-2.5">
-                        <span className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
-                          {product.price || "₹1,25,000"}
-                        </span>
-                        {product.originalPrice && (
-                          <span className="text-sm font-semibold text-gray-400 line-through">
-                            {product.originalPrice}
-                          </span>
-                        )}
-                        <span className="text-[11px] font-bold text-emerald-700 bg-emerald-100 border border-emerald-300/60 px-2 py-0.5 rounded">
-                          Save 15%
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="text-right">
-                      <span className="text-[11px] text-slate-700 font-bold block">
-                        MOQ: 1 Unit
-                      </span>
-                      <span className="text-[10px] text-slate-500 block">
-                        Bulk volume discounts available
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* GST Invoice Assurance */}
-                  <div className="mt-3 pt-3 border-t border-amber-200/60 flex items-center justify-between text-[11px] text-slate-600">
-                    <span className="flex items-center gap-1.5 font-medium">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-amber-600" />
-                      <span>Excl. 18% GST • Input Tax Credit (ITC) Invoice Provided</span>
-                    </span>
-                    <span className="text-amber-800 font-bold text-[10.5px] bg-amber-100/70 border border-amber-200 px-2 py-0.5 rounded">
-                      GeM Portal Available
-                    </span>
-                  </div>
-                </div>
-
-                {/* Technical Highlights 4-Grid */}
-                <div className="grid grid-cols-2 gap-2.5 sm:gap-3 my-5 p-4 rounded-xl bg-gray-50 border border-gray-200/80">
-                  {product.specs?.slice(0, 4).map((spec, sIdx) => (
-                    <div key={sIdx} className="flex flex-col">
-                      <span className="text-[10.5px] font-bold text-gray-500 uppercase tracking-wider">
-                        {spec.label}
-                      </span>
-                      <span className="text-xs sm:text-sm font-extrabold text-slate-900 mt-0.5 truncate">
-                        {spec.value}
-                      </span>
-                    </div>
+              {/* Rating & Procurement Verification (Clean Single Row) */}
+              <div className="flex items-center gap-2.5 text-xs">
+                <div className="flex items-center gap-0.5 text-amber-400">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                   ))}
                 </div>
+                <span className="font-bold text-slate-900">{product.rating || 5.0}</span>
+                <span className="text-slate-300">•</span>
+                <span className="text-slate-500 font-medium">
+                  {product.reviews || 48} Audits &amp; Reviews
+                </span>
+                <span className="text-slate-300 hidden sm:inline">•</span>
+                <span className="text-[11px] font-bold text-emerald-700 hidden sm:inline">
+                  Verified Lab Supply
+                </span>
+              </div>
 
-                {/* Quantity & Primary Action Buttons */}
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap sm:flex-nowrap">
-                    {/* Quantity Stepper */}
-                    <div className="flex items-center border border-gray-200 rounded-xl overflow-hidden bg-white shadow-xs">
-                      <button
-                        type="button"
-                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                        className="px-3.5 py-3 text-gray-600 hover:bg-gray-100 font-bold transition-colors"
-                      >
-                        -
-                      </button>
-                      <span className="px-3.5 py-3 text-xs font-bold text-slate-900 min-w-[36px] text-center">
-                        {quantity}
+              {/* Description */}
+              <p className="text-xs sm:text-[13px] text-slate-600 leading-relaxed max-w-xl">
+                {product.description}
+              </p>
+
+              {/* Clean Minimalist Pricing (Borderless & Sleek) */}
+              <div className="pt-3 border-t border-slate-100">
+                <div className="flex items-baseline justify-between gap-4 flex-wrap">
+                  <div>
+                    <div className="flex items-center gap-2.5 flex-wrap">
+                      <span className="text-2xl sm:text-3xl font-black text-slate-950 font-mono tracking-tight">
+                        {product.price || "₹1,25,000"}
                       </span>
-                      <button
-                        type="button"
-                        onClick={() => setQuantity(quantity + 1)}
-                        className="px-3.5 py-3 text-gray-600 hover:bg-gray-100 font-bold transition-colors"
-                      >
-                        +
-                      </button>
-                    </div>
-
-                    {/* Add to Cart Button (Yellow) */}
-                    <button
-                      type="button"
-                      onClick={() => addToCart(product, quantity, true)}
-                      className="flex-1 inline-flex items-center justify-center gap-2 bg-[#FFC400] hover:bg-[#e6b000] text-black font-extrabold text-xs sm:text-sm uppercase tracking-wide py-3.5 px-4 rounded-xl transition-all shadow-[0_4px_16px_rgba(255,196,0,0.35)] hover:shadow-[0_6px_22px_rgba(255,196,0,0.5)] active:scale-[0.98] cursor-pointer"
-                    >
-                      <ShoppingCart className="w-4 h-4 stroke-[2.5]" />
-                      <span>Add to Cart</span>
-                    </button>
-
-                    {/* Buy Now / Checkout Button (Black) */}
-                    <button
-                      type="button"
-                      onClick={handleBuyNow}
-                      className="flex-1 inline-flex items-center justify-center gap-2 bg-slate-950 hover:bg-black text-white font-extrabold text-xs sm:text-sm uppercase tracking-wide py-3.5 px-4 rounded-xl transition-all shadow-md active:scale-[0.98] cursor-pointer"
-                    >
-                      <span>Buy Now</span>
-                      <ArrowRight className="w-4 h-4 stroke-[2.5]" />
-                    </button>
-                  </div>
-
-                  {/* Secondary Actions: RFQ Modal, Datasheet, Wishlist & Share */}
-                  <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-                    <button
-                      type="button"
-                      onClick={() => setQuoteModalOpen(true)}
-                      className="flex-1 inline-flex items-center justify-center gap-1.5 border border-gray-300 hover:border-black text-slate-900 font-bold text-xs py-3 px-3 rounded-xl transition-colors bg-white shadow-xs"
-                    >
-                      <FileText className="w-3.5 h-3.5 text-amber-600" />
-                      <span>Official RFQ</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => handleDownloadDatasheet()}
-                      className="flex-1 inline-flex items-center justify-center gap-1.5 border border-gray-300 hover:border-black text-gray-800 hover:text-black font-bold text-xs py-3 px-3 rounded-xl transition-colors bg-white shadow-xs"
-                    >
-                      <Download className="w-3.5 h-3.5 text-amber-600" />
-                      <span>Datasheet</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => toggleWishlist(product)}
-                      aria-label="Wishlist"
-                      className="p-3 rounded-xl border border-gray-300 hover:border-rose-400 text-gray-600 hover:text-rose-600 transition-colors bg-white shadow-xs cursor-pointer"
-                      title={isInWishlist(product.id) ? "Saved in Wishlist" : "Save to Wishlist"}
-                    >
-                      <Heart
-                        className={`w-4 h-4 transition-all ${
-                          isInWishlist(product.id)
-                            ? "fill-rose-500 text-rose-500 scale-110"
-                            : "text-gray-600"
-                        }`}
-                      />
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={handleShareClick}
-                      aria-label="Share product"
-                      className="p-3 rounded-xl border border-gray-300 hover:border-black text-gray-600 hover:text-black transition-colors bg-white shadow-xs cursor-pointer"
-                    >
-                      <Share2 className="w-4 h-4" />
-                    </button>
-                  </div>
-
-                  {/* Specialist Direct Hotline */}
-                  <div className="p-3 rounded-xl bg-amber-50/70 border border-amber-200 flex items-center justify-between text-xs text-amber-950 mt-1">
-                    <div className="flex items-center gap-2">
-                      <PhoneCall className="w-4 h-4 text-amber-700 flex-shrink-0" />
-                      <span className="font-semibold">
-                        Need Custom Sizing or GeM Support? Speak to an Engineer:
+                      {product.originalPrice && (
+                        <span className="text-sm font-medium text-slate-400 line-through">
+                          {product.originalPrice}
+                        </span>
+                      )}
+                      <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-2 py-0.5 rounded-full">
+                        Save 15%
                       </span>
                     </div>
-                    <a
-                      href="tel:+919747745544"
-                      className="font-black text-slate-950 hover:text-amber-800 underline ml-2 whitespace-nowrap"
-                    >
-                      +91 97477 45544
-                    </a>
+
+                    <div className="flex items-center gap-3 mt-1.5 text-[11px] text-slate-500 font-medium flex-wrap">
+                      <span className="flex items-center gap-1 text-slate-600">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                        <span>Excl. 18% GST (ITC Eligible)</span>
+                      </span>
+                      <span>•</span>
+                      <span className="text-amber-800 font-bold">GeM Available</span>
+                    </div>
                   </div>
+
+                  <div className="text-right">
+                    <span className="text-xs font-bold text-slate-800 block">
+                      MOQ: 1 Unit
+                    </span>
+                    <span className="text-[10px] text-slate-400 block">
+                      Volume quotes available
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Sleek Technical Specs Grid (Minimal Divider-based) */}
+              <div className="grid grid-cols-2 gap-x-6 gap-y-2.5 py-3 border-y border-slate-100 my-1">
+                {product.specs?.slice(0, 4).map((spec, sIdx) => (
+                  <div key={sIdx} className="flex flex-col">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                      {spec.label}
+                    </span>
+                    <span className="text-xs sm:text-[13px] font-bold text-slate-800 mt-0.5 truncate">
+                      {spec.value}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Primary Actions: Stepper + Add to Cart + Buy Now */}
+              <div className="space-y-2.5 pt-1">
+                <div className="flex items-center gap-2 sm:gap-2.5">
+                  {/* Quantity Stepper */}
+                  <div className="flex items-center border border-slate-200 rounded-xl overflow-hidden bg-white shadow-2xs">
+                    <button
+                      type="button"
+                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                      className="px-3 py-2.5 text-slate-600 hover:bg-slate-100 font-bold transition-colors cursor-pointer"
+                    >
+                      -
+                    </button>
+                    <span className="px-3 py-2.5 text-xs font-bold text-slate-900 min-w-[32px] text-center font-mono">
+                      {quantity}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setQuantity(quantity + 1)}
+                      className="px-3 py-2.5 text-slate-600 hover:bg-slate-100 font-bold transition-colors cursor-pointer"
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  {/* Add to Cart Button (Yellow) */}
+                  <button
+                    type="button"
+                    onClick={() => addToCart(product, quantity, true)}
+                    className="flex-1 inline-flex items-center justify-center gap-2 bg-[#FFC400] hover:bg-[#e6b000] text-black font-extrabold text-xs sm:text-sm uppercase tracking-wide py-2.5 sm:py-3 px-4 rounded-xl transition-all shadow-sm hover:shadow active:scale-[0.98] cursor-pointer"
+                  >
+                    <ShoppingCart className="w-4 h-4 stroke-[2.5]" />
+                    <span>Add to Cart</span>
+                  </button>
+
+                  {/* Buy Now / Checkout Button (Black) */}
+                  <button
+                    type="button"
+                    onClick={handleBuyNow}
+                    className="flex-1 inline-flex items-center justify-center gap-2 bg-slate-950 hover:bg-black text-white font-extrabold text-xs sm:text-sm uppercase tracking-wide py-2.5 sm:py-3 px-4 rounded-xl transition-all shadow-sm active:scale-[0.98] cursor-pointer"
+                  >
+                    <span>Buy Now</span>
+                    <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+                  </button>
+                </div>
+
+                {/* Secondary Actions: RFQ, Datasheet, Wishlist, Share */}
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setQuoteModalOpen(true)}
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 border border-slate-200 hover:border-slate-400 text-slate-800 font-bold text-xs py-2 px-3 rounded-xl transition-colors bg-white shadow-2xs cursor-pointer"
+                  >
+                    <FileText className="w-3.5 h-3.5 text-amber-600" />
+                    <span>Official RFQ</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleDownloadDatasheet()}
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 border border-slate-200 hover:border-slate-400 text-slate-800 font-bold text-xs py-2 px-3 rounded-xl transition-colors bg-white shadow-2xs cursor-pointer"
+                  >
+                    <Download className="w-3.5 h-3.5 text-slate-500" />
+                    <span>Datasheet</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => toggleWishlist(product)}
+                    aria-label="Wishlist"
+                    className="p-2.5 rounded-xl border border-slate-200 hover:border-rose-400 text-slate-600 hover:text-rose-600 transition-colors bg-white shadow-2xs cursor-pointer"
+                    title={isInWishlist(product.id) ? "Saved in Wishlist" : "Save to Wishlist"}
+                  >
+                    <Heart
+                      className={`w-4 h-4 transition-all ${
+                        isInWishlist(product.id)
+                          ? "fill-rose-500 text-rose-500 scale-110"
+                          : "text-slate-600"
+                      }`}
+                    />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleShareClick}
+                    aria-label="Share product"
+                    className="p-2.5 rounded-xl border border-slate-200 hover:border-slate-400 text-slate-600 hover:text-black transition-colors bg-white shadow-2xs cursor-pointer"
+                  >
+                    <Share2 className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {/* Minimalist Hotline (Clean single line, not a bulky card) */}
+                <div className="pt-2 flex items-center justify-between text-xs text-slate-500">
+                  <span className="flex items-center gap-1.5">
+                    <PhoneCall className="w-3.5 h-3.5 text-slate-400" />
+                    <span>Technical &amp; GeM Inquiry:</span>
+                  </span>
+                  <a
+                    href="tel:+919747745544"
+                    className="font-bold text-slate-900 hover:text-[#C48F00] transition-colors"
+                  >
+                    +91 97477 45544
+                  </a>
                 </div>
               </div>
             </div>

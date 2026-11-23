@@ -13,6 +13,8 @@ import {
   Package,
   Plus,
   Minus,
+  Lock,
+  User,
 } from "lucide-react";
 import { useShop } from "@/context/ShopContext";
 
@@ -29,6 +31,9 @@ export default function CartDrawer() {
     cartDrawerOpen,
     setCartDrawerOpen,
     toastMessage,
+    user,
+    setAuthModalOpen,
+    setAuthPromptReason,
   } = useShop();
 
   return (
@@ -79,7 +84,33 @@ export default function CartDrawer() {
 
             {/* 2. Body / Items List */}
             <div className="flex-1 overflow-y-auto p-4 sm:p-5 divide-y divide-gray-100">
-              {cart.length === 0 ? (
+              {!user ? (
+                <div className="py-16 text-center space-y-4 px-4">
+                  <div className="w-16 h-16 rounded-2xl bg-amber-100 flex items-center justify-center mx-auto text-slate-900 shadow-inner">
+                    <Lock className="w-8 h-8 text-slate-900" />
+                  </div>
+                  <div>
+                    <h4 className="text-base font-black text-slate-900">
+                      Sign In Required to View Cart
+                    </h4>
+                    <p className="text-xs text-gray-500 max-w-xs mx-auto mt-1 leading-relaxed">
+                      Cart dekhne aur checkout process karne ke liye pehle apna business account Sign In ya Sign Up karein.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCartDrawerOpen(false);
+                      setAuthPromptReason("cart");
+                      setAuthModalOpen(true);
+                    }}
+                    className="inline-flex items-center justify-center gap-2 bg-slate-950 hover:bg-black text-white hover:text-[#FFC400] font-black text-xs uppercase tracking-wider py-3 px-6 rounded-full transition-all shadow-md active:scale-95 cursor-pointer"
+                  >
+                    <User className="w-4 h-4 text-[#FFC400]" />
+                    <span>Sign In / Create Account</span>
+                  </button>
+                </div>
+              ) : cart.length === 0 ? (
                 <div className="py-16 text-center space-y-4">
                   <div className="w-16 h-16 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center mx-auto text-amber-600">
                     <Package className="w-8 h-8 text-[#FFC400]" />

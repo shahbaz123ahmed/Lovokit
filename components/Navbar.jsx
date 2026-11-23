@@ -50,10 +50,8 @@ export default function Navbar() {
   const [brandDropdownOpen, setBrandDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileBrandsOpen, setMobileBrandsOpen] = useState(false);
-  const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authTab, setAuthTab] = useState("signin"); // "signin" | "signup"
   const [showPassword, setShowPassword] = useState(false);
-  const [loggedInUser, setLoggedInUser] = useState(null);
   const [authForm, setAuthForm] = useState({
     name: "",
     email: "sales@lovosis.in",
@@ -61,62 +59,63 @@ export default function Navbar() {
     company: "Lovosis Technology Pvt Ltd",
     password: "",
   });
-  const { cartCount, wishlistCount, setCartDrawerOpen } = useShop();
+  const {
+    cartCount,
+    wishlistCount,
+    setCartDrawerOpen,
+    user: loggedInUser,
+    login,
+    logout,
+    authModalOpen,
+    setAuthModalOpen,
+    authPromptReason,
+    setAuthPromptReason,
+  } = useShop();
   const [topBarVisible, setTopBarVisible] = useState(true);
   const brandRef = useRef(null);
   const brandTimeoutRef = useRef(null);
   const lastScrollY = useRef(0);
   const ticking = useRef(false);
 
-  useEffect(() => {
-    try {
-      const savedUser = localStorage.getItem("lovokit_user");
-      if (savedUser) {
-        setLoggedInUser(JSON.parse(savedUser));
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  }, []);
-
   const handleAuthSubmit = (e) => {
     e.preventDefault();
     if (authTab === "signup") {
       const newUser = {
-        name: authForm.name || (authForm.email ? authForm.email.split("@")[0] : "User"),
+        name: authForm.name || (authForm.email ? authForm.email.split("@")[0] : "Aman S."),
         email: authForm.email,
         phone: authForm.phone,
         company: authForm.company,
       };
-      setLoggedInUser(newUser);
-      try {
-        localStorage.setItem("lovokit_user", JSON.stringify(newUser));
-      } catch (err) {}
+      login(newUser);
       showToast(`Welcome to Lovokit, ${newUser.name}!`);
     } else {
       const user = {
-        name: authForm.email ? authForm.email.split("@")[0] : "Customer",
+        name: authForm.email ? authForm.email.split("@")[0] : "Aman S.",
         email: authForm.email,
       };
-      setLoggedInUser(user);
-      try {
-        localStorage.setItem("lovokit_user", JSON.stringify(user));
-      } catch (err) {}
+      login(user);
       showToast(`Signed in as ${user.name}`);
     }
     setAuthModalOpen(false);
+    if (authPromptReason === "cart") {
+      setCartDrawerOpen(true);
+      setAuthPromptReason("");
+    }
   };
 
   const handleDemoLogin = () => {
     const demoUser = {
       name: "Aman S.",
-      email: "aman@lovokit.in",
+      email: "sales@lovosis.in",
+      phone: "+91 97477 45544",
+      company: "Lovosis Technology Pvt Ltd",
     };
-    setLoggedInUser(demoUser);
-    try {
-      localStorage.setItem("lovokit_user", JSON.stringify(demoUser));
-    } catch (err) {}
+    login(demoUser);
     setAuthModalOpen(false);
+    if (authPromptReason === "cart") {
+      setCartDrawerOpen(true);
+      setAuthPromptReason("");
+    }
   };
 
   const handleBrandEnter = () => {
@@ -581,10 +580,18 @@ export default function Navbar() {
                 ) : null}
               </Link>
 
-              {/* My Cart Button (Opens Cart Drawer, shows live count) */}
+              {/* My Cart Button (Requires Sign In to open) */}
               <button
                 type="button"
-                onClick={() => setCartDrawerOpen(true)}
+                onClick={() => {
+                  if (!loggedInUser) {
+                    setAuthPromptReason("cart");
+                    setAuthModalOpen(true);
+                    showToast("Please sign in or create an account to access your cart");
+                  } else {
+                    setCartDrawerOpen(true);
+                  }
+                }}
                 className="flex items-center justify-center w-8 h-8 sm:w-auto sm:px-3.5 sm:py-1.5 rounded-full border border-gray-200 bg-gray-100 sm:bg-white hover:border-gray-300 transition-colors shadow-2xs cursor-pointer"
               >
                 <div className="relative">
@@ -624,10 +631,22 @@ export default function Navbar() {
                   </button>
                   {/* Dropdown Menu on Hover */}
                   <div className="hidden group-hover/user:block absolute right-0 top-full pt-1.5 z-50">
-                    <div className="w-44 bg-white rounded-2xl shadow-xl border border-slate-100 p-2 text-xs">
-                      <div className="px-3 py-2 border-b border-slate-100 font-bold text-slate-800">
-                        {loggedInUser.name || "Customer"}
+                    <div className="w-52 bg-white rounded-2xl shadow-xl border border-slate-100 p-2 text-xs">
+                      <div className="px-3 py-2 border-b border-slate-100">
+                        <div className="font-extrabold text-slate-900 truncate">
+                          {loggedInUser.name || "Customer"}
+                        </div>
+                        <div className="text-[10px] text-slate-400 font-medium truncate">
+                          {loggedInUser.email || ""}
+                        </div>
                       </div>
+                      <Link
+                        href="/profile"
+                        className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-amber-50 hover:text-amber-900 text-slate-800 font-bold transition-colors mt-1"
+                      >
+                        <User className="w-3.5 h-3.5 text-[#FFC400]" />
+                        <span>Profile & Address</span>
+                      </Link>
                       <Link
                         href="/wishlist"
                         className="block px-3 py-2 rounded-xl hover:bg-slate-50 text-slate-700 font-medium"
@@ -642,10 +661,7 @@ export default function Navbar() {
                       </Link>
                       <button
                         type="button"
-                        onClick={() => {
-                          localStorage.removeItem("lovokit_user");
-                          setLoggedInUser(null);
-                        }}
+                        onClick={logout}
                         className="w-full text-left px-3 py-2 rounded-xl hover:bg-red-50 text-red-600 font-bold mt-1 cursor-pointer"
                       >
                         Sign Out
@@ -961,27 +977,35 @@ export default function Navbar() {
             </div>
 
             {/* Bottom: User Sign In / Account Info */}
-            <div className="px-5 py-4 border-t border-gray-100 bg-slate-50">
+            <div className="px-5 py-4 border-t border-gray-100 bg-slate-50 space-y-2">
               {loggedInUser ? (
-                <div className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-2">
-                    <span className="w-6 h-6 rounded-full bg-[#FFC400] text-black font-black flex items-center justify-center text-[11px]">
-                      {(loggedInUser.name || "U")[0].toUpperCase()}
-                    </span>
-                    <span className="font-bold text-slate-900">{loggedInUser.name}</span>
+                <>
+                  <div className="flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-2">
+                      <span className="w-6 h-6 rounded-full bg-[#FFC400] text-black font-black flex items-center justify-center text-[11px]">
+                        {(loggedInUser.name || "U")[0].toUpperCase()}
+                      </span>
+                      <span className="font-bold text-slate-900">{loggedInUser.name}</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        logout();
+                        setMobileMenuOpen(false);
+                      }}
+                      className="text-red-600 font-bold hover:underline cursor-pointer text-xs"
+                    >
+                      Sign Out
+                    </button>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      localStorage.removeItem("lovokit_user");
-                      setLoggedInUser(null);
-                      setMobileMenuOpen(false);
-                    }}
-                    className="text-red-600 font-bold hover:underline cursor-pointer"
+                  <Link
+                    href="/profile"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block text-center w-full py-2 rounded-xl bg-white border border-slate-200 text-slate-900 font-bold text-xs hover:bg-slate-50 transition-colors"
                   >
-                    Sign Out
-                  </button>
-                </div>
+                    My Profile & Address
+                  </Link>
+                </>
               ) : (
                 <button
                   type="button"
@@ -1001,438 +1025,214 @@ export default function Navbar() {
       </header>
 
       {/* ======================================================== */}
-      {/* DEDICATED FULL-SCREEN ENTERPRISE AUTHENTICATION PAGE      */}
+      {/* SLEEK, COMPACT AUTHENTICATION MODAL (NON-BULKY)          */}
       {/* ======================================================== */}
       {authModalOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-[#F2F4F7] flex flex-col justify-between animate-in fade-in duration-150">
-          {/* Subtle Enterprise Matrix Pattern on Off-White Canvas */}
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
+          {/* Backdrop dismiss */}
           <div
-            className="fixed inset-0 pointer-events-none opacity-40 z-0"
-            style={{
-              backgroundImage: "radial-gradient(#CBD5E1 1.2px, transparent 1.2px)",
-              backgroundSize: "24px 24px",
-            }}
+            className="absolute inset-0"
+            onClick={() => setAuthModalOpen(false)}
           />
 
-          {/* Top Dedicated Portal Navigation Bar */}
-          <header className="relative z-10 w-full px-4 sm:px-8 py-3.5 sm:py-4 flex items-center justify-between border-b border-slate-200/80 bg-white/80 backdrop-blur-md shadow-2xs">
-            {/* Back to store navigation */}
-            <button
-              type="button"
-              onClick={() => setAuthModalOpen(false)}
-              className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-wider text-slate-700 hover:text-black transition-colors cursor-pointer group px-3 py-1.5 rounded-full hover:bg-slate-100"
-            >
-              <ArrowLeft className="w-4 h-4 text-slate-500 group-hover:-translate-x-1 transition-transform" />
-              <span>Back to Store</span>
-            </button>
-
-            {/* Portal Title Badge */}
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[11px] font-extrabold uppercase tracking-widest text-slate-700">
-                LOVOKIT ENTERPRISE B2B GATEWAY
-              </span>
+          {/* Sleek, Non-Bulky Modal Card */}
+          <div className="relative w-full max-w-md bg-white rounded-3xl p-6 sm:p-7 shadow-2xl border border-slate-200 z-10 animate-in zoom-in-95 duration-150">
+            {/* Header: Logo, Badge, and Close Button */}
+            <div className="flex items-center justify-between pb-3.5 border-b border-slate-100">
+              <div className="flex items-center gap-2">
+                <Logo darkText={true} />
+                <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 text-[9.5px] font-black uppercase tracking-wider">
+                  B2B Portal
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setAuthModalOpen(false)}
+                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-black flex items-center justify-center transition-colors cursor-pointer"
+                aria-label="Close Modal"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
 
-            {/* Close / Dismiss Button */}
-            <button
-              type="button"
-              onClick={() => setAuthModalOpen(false)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-200/80 hover:bg-slate-300 text-slate-800 text-xs font-black transition-colors cursor-pointer"
-              title="Return to Marketplace"
-            >
-              <X className="w-4 h-4" />
-              <span className="hidden sm:inline">Close</span>
-            </button>
-          </header>
-
-          {/* Main Centered Auth Container */}
-          <main className="relative z-10 flex-1 flex items-center justify-center p-3 sm:p-6 lg:p-8">
-            <div className="relative w-full max-w-4xl bg-white rounded-3xl sm:rounded-[32px] shadow-[0_20px_50px_-10px_rgba(15,23,42,0.12)] border border-slate-200/90 overflow-hidden grid grid-cols-1 md:grid-cols-12 my-auto">
-              {/* ---------------------------------------------------- */}
-              {/* LEFT COLUMN: BESPOKE ENTERPRISE SHOWCASE (DARK CARBON)*/}
-              {/* ---------------------------------------------------- */}
-              <div className="md:col-span-5 bg-gradient-to-b from-[#0E121A] via-[#090C12] to-[#05070B] text-white p-7 sm:p-8 lg:p-9 flex flex-col justify-between relative overflow-hidden border-b md:border-b-0 md:border-r border-white/10 select-none">
-                {/* Subtle tech dot matrix pattern */}
-                <div
-                  className="absolute inset-0 opacity-[0.07] pointer-events-none"
-                  style={{
-                    backgroundImage: "radial-gradient(#ffffff 1px, transparent 1px)",
-                    backgroundSize: "18px 18px",
-                  }}
-                />
-
-                {/* Ambient Gold & Ember Lighting Accents */}
-                <div className="absolute -top-16 -right-16 w-56 h-56 bg-[#FFC400]/15 rounded-full blur-3xl pointer-events-none" />
-                <div className="absolute -bottom-16 -left-16 w-56 h-56 bg-orange-600/10 rounded-full blur-3xl pointer-events-none" />
-
-                <div className="relative z-10 space-y-5">
-                  {/* Brand Header with Live Enterprise Badge */}
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="inline-block bg-white px-3 py-2 rounded-xl shadow-md border border-white/20">
-                      <Logo darkText={true} />
-                    </div>
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/[0.07] border border-white/15 text-[10px] font-black tracking-wider uppercase text-[#FFC400]">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#FFC400] animate-pulse" />
-                      B2B PORTAL
-                    </span>
-                  </div>
-
-                  {/* Distinctive Hero Headline */}
-                  <div className="pt-2">
-                    <div className="inline-block text-[10.5px] font-extrabold uppercase tracking-widest text-[#FFC400] mb-1.5">
-                      Verified Wholesale Gateway
-                    </div>
-                    <h2 className="text-2xl sm:text-3xl font-black text-white leading-[1.12] tracking-tight uppercase">
-                      ENTERPRISE <br />
-                      <span className="bg-gradient-to-r from-[#FFC400] via-[#FFE082] to-[#FFB300] bg-clip-text text-transparent">
-                        PROCUREMENT
-                      </span> <br />
-                      ACCESS
-                    </h2>
-                    <p className="mt-2.5 text-xs text-slate-300 leading-relaxed">
-                      Sign in with your business credentials to access orders, invoices, serialized warranties, and dedicated support.
-                    </p>
-                  </div>
-
-                  {/* 3 Bespoke Value Pillar Cards */}
-                  <div className="space-y-2.5 pt-1">
-                    {/* Pillar 1: Secure Authentication */}
-                    <div className="group/pillar p-3 rounded-2xl bg-white/[0.04] hover:bg-white/[0.07] border border-white/10 hover:border-[#FFC400]/40 transition-all duration-200 flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#FFC400]/25 to-[#FFC400]/5 border border-[#FFC400]/30 text-[#FFC400] flex items-center justify-center shrink-0 group-hover/pillar:scale-105 transition-transform">
-                        <Lock className="w-4 h-4" />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-black uppercase tracking-wider text-white">
-                            SECURE AUTHENTICATION
-                          </span>
-                          <span className="text-[9px] font-bold text-[#FFC400] bg-[#FFC400]/10 px-1.5 py-0.5 rounded">
-                            2FA
-                          </span>
-                        </div>
-                        <div className="text-[11px] text-slate-400 mt-0.5 leading-snug truncate">
-                          Industry-standard encryption and 2FA protection.
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Pillar 2: Role-Based Dashboard */}
-                    <div className="group/pillar p-3 rounded-2xl bg-white/[0.04] hover:bg-white/[0.07] border border-white/10 hover:border-[#FFC400]/40 transition-all duration-200 flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400/20 to-emerald-400/5 border border-emerald-400/30 text-emerald-400 flex items-center justify-center shrink-0 group-hover/pillar:scale-105 transition-transform">
-                        <ShieldCheck className="w-4 h-4" />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-black uppercase tracking-wider text-white">
-                            ROLE-BASED DASHBOARD
-                          </span>
-                          <span className="text-[9px] font-bold text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded">
-                            RBAC
-                          </span>
-                        </div>
-                        <div className="text-[11px] text-slate-400 mt-0.5 leading-snug truncate">
-                          Personalized view based on your account permissions.
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Pillar 3: Unified Workspace */}
-                    <div className="group/pillar p-3 rounded-2xl bg-white/[0.04] hover:bg-white/[0.07] border border-white/10 hover:border-[#FFC400]/40 transition-all duration-200 flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-sky-400/20 to-sky-400/5 border border-sky-400/30 text-sky-400 flex items-center justify-center shrink-0 group-hover/pillar:scale-105 transition-transform">
-                        <Zap className="w-4 h-4" />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-black uppercase tracking-wider text-white">
-                            UNIFIED WORKSPACE
-                          </span>
-                          <span className="text-[9px] font-bold text-sky-400 bg-sky-400/10 px-1.5 py-0.5 rounded">
-                            ALL-IN-ONE
-                          </span>
-                        </div>
-                        <div className="text-[11px] text-slate-400 mt-0.5 leading-snug truncate">
-                          Orders, quotes, invoices, and support in one place.
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+            {/* Cart Access Requirement Alert Banner (shown when user tries to open cart without signing in) */}
+            {authPromptReason === "cart" && (
+              <div className="mt-3.5 p-3 rounded-2xl bg-amber-50/90 border border-amber-300 text-amber-950 flex items-start gap-2.5 animate-in slide-in-from-top-2 duration-200">
+                <div className="w-7 h-7 rounded-full bg-[#FFC400] text-black flex items-center justify-center shrink-0 font-bold">
+                  <ShoppingCart className="w-3.5 h-3.5" />
                 </div>
-
-                {/* Bottom Copyright & Systems Status Pill */}
-                <div className="pt-6 mt-6 border-t border-white/10 text-[10.5px] text-slate-400 relative z-10 flex flex-col gap-1.5">
-                  <div className="inline-flex items-center gap-2 bg-white/[0.05] border border-white/10 px-2.5 py-1 rounded-full w-fit">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                    <span className="text-white font-bold text-[10px] tracking-wide">
-                      Systems Operational • 99.99% Uptime
-                    </span>
-                  </div>
-                  <div className="text-[10px] text-slate-400 mt-0.5">
-                    © 2026 Lovokit by Lovosis Technology Private Limited.
-                  </div>
-                </div>
-              </div>
-
-              {/* ---------------------------------------------------- */}
-              {/* RIGHT COLUMN: REFINED INTERACTIVE AUTH FORM (LIGHT) */}
-              {/* ---------------------------------------------------- */}
-              <div className="md:col-span-7 bg-white p-7 sm:p-8 lg:p-9 flex flex-col justify-between relative overflow-y-auto max-h-[88vh] no-scrollbar">
-                {/* Close Button Top Right of Card */}
-                <button
-                  type="button"
-                  onClick={() => setAuthModalOpen(false)}
-                  className="absolute top-5 right-5 p-2 rounded-full text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-all cursor-pointer z-20 group"
-                  aria-label="Close"
-                >
-                  <X className="w-5 h-5 group-hover:rotate-90 transition-transform" />
-                </button>
-
-                <div>
-                  {/* Modern Pill Switcher: SIGN IN vs CREATE ACCOUNT */}
-                  <div className="flex items-center justify-between gap-3 mb-6 pr-8">
-                    <div className="inline-flex p-1 bg-slate-100 rounded-2xl border border-slate-200/80">
-                      <button
-                        type="button"
-                        onClick={() => setAuthTab("signin")}
-                        className={`px-4 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
-                          authTab === "signin"
-                            ? "bg-slate-950 text-white shadow-sm"
-                            : "text-slate-600 hover:text-slate-950 hover:bg-white/60"
-                        }`}
-                      >
-                        Sign In
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setAuthTab("signup")}
-                        className={`px-4 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
-                          authTab === "signup"
-                            ? "bg-[#FFC400] text-black shadow-sm"
-                            : "text-slate-600 hover:text-slate-950 hover:bg-white/60"
-                        }`}
-                      >
-                        Create Account
-                      </button>
-                    </div>
-
-                    <span className="hidden sm:inline-block text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                      {authTab === "signin" ? "Returning Buyer" : "New Enterprise"}
-                    </span>
-                  </div>
-
-                  {/* Header Title & Subtitle */}
-                  <div className="mb-5">
-                    <h3 className="text-2xl font-black text-slate-950 tracking-tight uppercase flex items-center gap-2">
-                      {authTab === "signin" ? "SIGN IN" : "CREATE ACCOUNT"}
-                      <span className="w-2 h-2 rounded-full bg-[#FFC400]" />
-                    </h3>
-                    <p className="text-xs font-bold uppercase tracking-wider text-slate-500 mt-1">
-                      {authTab === "signin"
-                        ? "ACCESS YOUR BUSINESS ACCOUNT"
-                        : "REGISTER YOUR ENTERPRISE PROFILE"}
-                    </p>
-                  </div>
-
-                  {/* Main Auth Form */}
-                  <form onSubmit={handleAuthSubmit} className="space-y-3.5 text-left">
-                    {/* Sign Up: Full Name */}
-                    {authTab === "signup" && (
-                      <div>
-                        <label className="text-[10.5px] font-black uppercase tracking-wider text-slate-700 block mb-1">
-                          FULL NAME <span className="text-red-500">*</span>
-                        </label>
-                        <div className="relative flex items-center">
-                          <User className="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none" />
-                          <input
-                            type="text"
-                            required
-                            value={authForm.name}
-                            onChange={(e) =>
-                              setAuthForm({ ...authForm, name: e.target.value })
-                            }
-                            placeholder="e.g. Aman Sharma"
-                            className="w-full bg-slate-50 hover:bg-white focus:bg-white border border-slate-200/90 focus:border-[#FFC400] focus:ring-4 focus:ring-[#FFC400]/15 text-xs sm:text-sm text-slate-900 rounded-xl pl-10 pr-4 py-2.5 sm:py-3 focus:outline-none transition-all font-medium shadow-2xs"
-                          />
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Business Email */}
-                    <div>
-                      <label className="text-[10.5px] font-black uppercase tracking-wider text-slate-700 block mb-1">
-                        BUSINESS EMAIL <span className="text-red-500">*</span>
-                      </label>
-                      <div className="relative flex items-center">
-                        <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none" />
-                        <input
-                          type="email"
-                          required
-                          value={authForm.email}
-                          onChange={(e) =>
-                            setAuthForm({ ...authForm, email: e.target.value })
-                          }
-                          placeholder="sales@lovosis.in"
-                          className="w-full bg-slate-50 hover:bg-white focus:bg-white border border-slate-200/90 focus:border-[#FFC400] focus:ring-4 focus:ring-[#FFC400]/15 text-xs sm:text-sm text-slate-900 rounded-xl pl-10 pr-4 py-2.5 sm:py-3 focus:outline-none transition-all font-medium shadow-2xs"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Sign Up: Phone & Company */}
-                    {authTab === "signup" && (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div>
-                          <label className="text-[10.5px] font-black uppercase tracking-wider text-slate-700 block mb-1">
-                            PHONE / WHATSAPP <span className="text-red-500">*</span>
-                          </label>
-                          <div className="relative flex items-center">
-                            <Phone className="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none" />
-                            <input
-                              type="tel"
-                              required
-                              value={authForm.phone}
-                              onChange={(e) =>
-                                setAuthForm({ ...authForm, phone: e.target.value })
-                              }
-                              placeholder="+91 98000 00000"
-                              className="w-full bg-slate-50 hover:bg-white focus:bg-white border border-slate-200/90 focus:border-[#FFC400] focus:ring-4 focus:ring-[#FFC400]/15 text-xs sm:text-sm text-slate-900 rounded-xl pl-10 pr-4 py-2.5 sm:py-3 focus:outline-none transition-all font-medium shadow-2xs"
-                            />
-                          </div>
-                        </div>
-
-                        <div>
-                          <label className="text-[10.5px] font-black uppercase tracking-wider text-slate-700 block mb-1">
-                            COMPANY (FOR GST)
-                          </label>
-                          <div className="relative flex items-center">
-                            <Building2 className="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none" />
-                            <input
-                              type="text"
-                              value={authForm.company}
-                              onChange={(e) =>
-                                setAuthForm({ ...authForm, company: e.target.value })
-                              }
-                              placeholder="Lovosis Technology"
-                              className="w-full bg-slate-50 hover:bg-white focus:bg-white border border-slate-200/90 focus:border-[#FFC400] focus:ring-4 focus:ring-[#FFC400]/15 text-xs sm:text-sm text-slate-900 rounded-xl pl-10 pr-4 py-2.5 sm:py-3 focus:outline-none transition-all font-medium shadow-2xs"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Password with Eye toggle */}
-                    <div>
-                      <div className="flex items-center justify-between mb-1">
-                        <label className="text-[10.5px] font-black uppercase tracking-wider text-slate-700 block">
-                          PASSWORD <span className="text-red-500">*</span>
-                        </label>
-                        {authTab === "signin" && (
-                          <button
-                            type="button"
-                            onClick={() => showToast("Password reset link sent to registered email")}
-                            className="text-[11px] font-bold text-slate-500 hover:text-black hover:underline cursor-pointer"
-                          >
-                            Forgot password?
-                          </button>
-                        )}
-                      </div>
-                      <div className="relative flex items-center">
-                        <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none" />
-                        <input
-                          type={showPassword ? "text" : "password"}
-                          required
-                          value={authForm.password}
-                          onChange={(e) =>
-                            setAuthForm({ ...authForm, password: e.target.value })
-                          }
-                          placeholder="••••••••••••"
-                          className="w-full bg-slate-50 hover:bg-white focus:bg-white border border-slate-200/90 focus:border-[#FFC400] focus:ring-4 focus:ring-[#FFC400]/15 text-xs sm:text-sm text-slate-900 rounded-xl pl-10 pr-10 py-2.5 sm:py-3 focus:outline-none transition-all font-medium shadow-2xs tracking-wider"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-3.5 text-slate-400 hover:text-slate-700 cursor-pointer p-1"
-                          aria-label="Toggle password visibility"
-                        >
-                          {showPassword ? (
-                            <EyeOff className="w-4 h-4" />
-                          ) : (
-                            <Eye className="w-4 h-4" />
-                          )}
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Primary Submit Button */}
-                    <button
-                      type="submit"
-                      className="w-full mt-2 py-3.5 rounded-xl bg-slate-950 hover:bg-black text-white hover:text-[#FFC400] font-black text-xs sm:text-sm uppercase tracking-wider inline-flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg cursor-pointer active:scale-[0.99] group/btn"
-                    >
-                      <span>
-                        {authTab === "signin"
-                          ? "SIGN IN TO DASHBOARD"
-                          : "CREATE BUSINESS ACCOUNT"}
-                      </span>
-                      <ArrowRight className="w-4 h-4 stroke-[2.5] group-hover/btn:translate-x-1 transition-transform" />
-                    </button>
-                  </form>
-
-                  {/* Divider: OR CONTINUE WITH */}
-                  <div className="relative my-4 text-center">
-                    <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-slate-200" />
-                    </div>
-                    <span className="relative bg-white px-3 text-[10px] sm:text-[10.5px] font-black uppercase tracking-wider text-slate-400">
-                      OR CONTINUE WITH
-                    </span>
-                  </div>
-
-                  {/* Social / Demo Actions */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    <button
-                      type="button"
-                      onClick={handleDemoLogin}
-                      className="py-2.5 px-4 rounded-xl border border-slate-200 hover:border-slate-400 bg-white hover:bg-slate-50 text-slate-800 font-bold text-xs inline-flex items-center justify-center gap-2 transition-all cursor-pointer shadow-2xs"
-                    >
-                      <Globe className="w-4 h-4 text-blue-600" />
-                      <span>GOOGLE</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={handleDemoLogin}
-                      className="py-2.5 px-4 rounded-xl bg-amber-50 hover:bg-amber-100/90 border border-amber-300 text-amber-950 font-bold text-xs inline-flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-2xs"
-                    >
-                      <Zap className="w-3.5 h-3.5 text-amber-600 fill-amber-500" />
-                      <span className="truncate">1-CLICK DEMO (sales@lovosis.in)</span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Bottom Security / Trust Footer */}
-                <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-                  <span className="flex items-center gap-1">
-                    <Lock className="w-3 h-3 text-slate-400" />
-                    256-Bit SSL
+                <div className="text-xs">
+                  <span className="font-extrabold block text-slate-900">Cart Access Restricted</span>
+                  <span className="text-[11px] text-slate-700 leading-tight block mt-0.5">
+                    Cart open karne ke liye pehle apna account <strong>Sign In</strong> ya <strong>Sign Up</strong> karein.
                   </span>
-                  <span>•</span>
-                  <span>Instant GST Invoicing</span>
-                  <span>•</span>
-                  <span className="text-emerald-600">Lovosis Verified</span>
                 </div>
               </div>
-            </div>
-          </main>
+            )}
 
-          {/* Bottom Security Footer Strip */}
-          <footer className="relative z-10 w-full py-3 sm:py-3.5 px-4 text-center border-t border-slate-200/80 bg-white/60 backdrop-blur-xs">
-            <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-[10.5px] font-bold text-slate-500 uppercase tracking-wider">
-              <span>🔒 256-Bit Bank-Grade SSL</span>
-              <span className="hidden sm:inline">•</span>
-              <span>⚡ Automated GST Invoicing & Compliance</span>
-              <span className="hidden sm:inline">•</span>
-              <span>🛡️ Lovosis Technology Enterprise Network</span>
+            {/* Pill Switcher: Sign In vs Create Account */}
+            <div className="flex p-1 bg-slate-100 rounded-2xl border border-slate-200/80 my-4">
+              <button
+                type="button"
+                onClick={() => setAuthTab("signin")}
+                className={`flex-1 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+                  authTab === "signin"
+                    ? "bg-slate-950 text-white shadow-sm"
+                    : "text-slate-600 hover:text-slate-950"
+                }`}
+              >
+                Sign In
+              </button>
+              <button
+                type="button"
+                onClick={() => setAuthTab("signup")}
+                className={`flex-1 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+                  authTab === "signup"
+                    ? "bg-[#FFC400] text-black shadow-sm"
+                    : "text-slate-600 hover:text-slate-950"
+                }`}
+              >
+                Create Account
+              </button>
             </div>
-          </footer>
+
+            {/* Main Auth Form */}
+            <form onSubmit={handleAuthSubmit} className="space-y-3 text-left">
+              {authTab === "signup" && (
+                <div>
+                  <label className="text-[10.5px] font-black uppercase tracking-wider text-slate-700 block mb-1">
+                    Full Name <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative flex items-center">
+                    <User className="w-4 h-4 text-slate-400 absolute left-3 pointer-events-none" />
+                    <input
+                      type="text"
+                      required
+                      value={authForm.name}
+                      onChange={(e) => setAuthForm({ ...authForm, name: e.target.value })}
+                      placeholder="e.g. Aman Sharma"
+                      className="w-full bg-slate-50 focus:bg-white border border-slate-200 focus:border-[#FFC400] text-xs text-slate-900 rounded-xl pl-9 pr-3 py-2.5 focus:outline-none transition-all font-medium"
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div>
+                <label className="text-[10.5px] font-black uppercase tracking-wider text-slate-700 block mb-1">
+                  Business Email <span className="text-red-500">*</span>
+                </label>
+                <div className="relative flex items-center">
+                  <Mail className="w-4 h-4 text-slate-400 absolute left-3 pointer-events-none" />
+                  <input
+                    type="email"
+                    required
+                    value={authForm.email}
+                    onChange={(e) => setAuthForm({ ...authForm, email: e.target.value })}
+                    placeholder="sales@lovosis.in"
+                    className="w-full bg-slate-50 focus:bg-white border border-slate-200 focus:border-[#FFC400] text-xs text-slate-900 rounded-xl pl-9 pr-3 py-2.5 focus:outline-none transition-all font-medium"
+                  />
+                </div>
+              </div>
+
+              {authTab === "signup" && (
+                <div className="grid grid-cols-2 gap-2.5">
+                  <div>
+                    <label className="text-[10.5px] font-black uppercase tracking-wider text-slate-700 block mb-1">
+                      Phone / WhatsApp <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="tel"
+                      required
+                      value={authForm.phone}
+                      onChange={(e) => setAuthForm({ ...authForm, phone: e.target.value })}
+                      placeholder="+91 98000 00000"
+                      className="w-full bg-slate-50 focus:bg-white border border-slate-200 focus:border-[#FFC400] text-xs text-slate-900 rounded-xl px-3 py-2.5 focus:outline-none transition-all font-medium"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[10.5px] font-black uppercase tracking-wider text-slate-700 block mb-1">
+                      Company Name
+                    </label>
+                    <input
+                      type="text"
+                      value={authForm.company}
+                      onChange={(e) => setAuthForm({ ...authForm, company: e.target.value })}
+                      placeholder="Company Pvt Ltd"
+                      className="w-full bg-slate-50 focus:bg-white border border-slate-200 focus:border-[#FFC400] text-xs text-slate-900 rounded-xl px-3 py-2.5 focus:outline-none transition-all font-medium"
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-[10.5px] font-black uppercase tracking-wider text-slate-700 block">
+                    Password <span className="text-red-500">*</span>
+                  </label>
+                  {authTab === "signin" && (
+                    <button
+                      type="button"
+                      onClick={() => showToast("Password reset link sent to registered email")}
+                      className="text-[10.5px] font-bold text-slate-500 hover:text-black cursor-pointer"
+                    >
+                      Forgot?
+                    </button>
+                  )}
+                </div>
+                <div className="relative flex items-center">
+                  <Lock className="w-4 h-4 text-slate-400 absolute left-3 pointer-events-none" />
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    required
+                    value={authForm.password}
+                    onChange={(e) => setAuthForm({ ...authForm, password: e.target.value })}
+                    placeholder="••••••••"
+                    className="w-full bg-slate-50 focus:bg-white border border-slate-200 focus:border-[#FFC400] text-xs text-slate-900 rounded-xl pl-9 pr-9 py-2.5 focus:outline-none transition-all font-medium"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-2.5 text-slate-400 hover:text-slate-700 cursor-pointer p-1"
+                  >
+                    {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                  </button>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full mt-3 py-3 rounded-xl bg-slate-950 hover:bg-black text-white hover:text-[#FFC400] font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer"
+              >
+                <span>{authTab === "signin" ? "Sign In to Dashboard" : "Create Business Account"}</span>
+                <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+              </button>
+            </form>
+
+            {/* Quick Demo & Social login */}
+            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center gap-2">
+              <button
+                type="button"
+                onClick={handleDemoLogin}
+                className="flex-1 py-2 px-3 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-950 font-bold text-[11px] flex items-center justify-center gap-1.5 cursor-pointer transition-all"
+              >
+                <Zap className="w-3.5 h-3.5 text-amber-600 fill-amber-500" />
+                <span>1-Click Demo (Aman S.)</span>
+              </button>
+              <button
+                type="button"
+                onClick={handleDemoLogin}
+                className="py-2 px-3 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-800 font-bold text-[11px] flex items-center justify-center gap-1 cursor-pointer transition-all"
+              >
+                <Globe className="w-3.5 h-3.5 text-blue-600" />
+                <span>Google</span>
+              </button>
+            </div>
+
+            {/* Trust footer */}
+            <div className="mt-3 text-center text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+              <span>🔒 256-Bit SSL • Instant GST Invoicing • Lovosis Verified</span>
+            </div>
+          </div>
         </div>
       )}
 

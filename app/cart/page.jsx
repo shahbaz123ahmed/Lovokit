@@ -17,6 +17,8 @@ import {
   Tag,
   PhoneCall,
   Sparkles,
+  Lock,
+  User,
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -32,6 +34,9 @@ export default function CartPage() {
     cartSubtotal,
     cartGst,
     cartTotal,
+    user,
+    setAuthModalOpen,
+    setAuthPromptReason,
   } = useShop();
 
   const [couponCode, setCouponCode] = useState("");
@@ -58,6 +63,58 @@ export default function CartPage() {
   const finalSubtotal = Math.max(0, cartSubtotal - discountAmount);
   const finalGst = Math.round(finalSubtotal * 0.18);
   const finalGrandTotal = finalSubtotal + finalGst;
+
+  // Unauthenticated Guard: Require user to Sign In / Sign Up to access Cart
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-[#F8F9FA] text-slate-900 selection:bg-[#FFC400] selection:text-black flex flex-col justify-between">
+        <Navbar />
+
+        <main className="max-w-xl mx-auto px-4 pt-32 sm:pt-40 pb-20 text-center w-full my-auto">
+          <div className="bg-white rounded-3xl p-8 sm:p-10 border border-slate-200/90 shadow-xl space-y-4">
+            <div className="w-16 h-16 rounded-2xl bg-amber-100 text-amber-900 flex items-center justify-center mx-auto shadow-inner">
+              <Lock className="w-8 h-8 text-slate-900" />
+            </div>
+
+            <div className="space-y-1.5">
+              <span className="text-[10px] font-black uppercase tracking-widest text-[#B58200] bg-amber-50 px-3 py-1 rounded-full border border-amber-200">
+                Authentication Required
+              </span>
+              <h1 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight pt-1">
+                Sign In Required to View Cart
+              </h1>
+            </div>
+
+            <p className="text-xs sm:text-sm text-slate-600 font-medium max-w-md mx-auto leading-relaxed">
+              Cart dekhne aur order process karne ke liye pehle apna business account <strong>Sign In</strong> ya <strong>Sign Up</strong> karein.
+            </p>
+
+            <div className="pt-3 flex flex-col sm:flex-row items-center justify-center gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setAuthPromptReason("cart");
+                  setAuthModalOpen(true);
+                }}
+                className="w-full sm:w-auto px-7 py-3.5 rounded-full bg-slate-950 hover:bg-black text-white hover:text-[#FFC400] font-black text-xs uppercase tracking-wider transition-all shadow-md cursor-pointer inline-flex items-center justify-center gap-2"
+              >
+                <User className="w-4 h-4 text-[#FFC400]" />
+                <span>Sign In / Create Account</span>
+              </button>
+              <Link
+                href="/products"
+                className="w-full sm:w-auto px-6 py-3.5 rounded-full border border-slate-200 hover:bg-slate-100 text-slate-800 font-bold text-xs uppercase tracking-wider transition-colors inline-flex items-center justify-center"
+              >
+                Browse Products
+              </Link>
+            </div>
+          </div>
+        </main>
+
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#F8F9FA] text-slate-900 selection:bg-[#FFC400] selection:text-black">

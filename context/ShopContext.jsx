@@ -29,6 +29,14 @@ const ShopContext = createContext({
   setCartDrawerOpen: () => {},
   toastMessage: "",
   showToast: () => {},
+  user: null,
+  login: () => {},
+  logout: () => {},
+  updateUser: () => {},
+  authModalOpen: false,
+  setAuthModalOpen: () => {},
+  authPromptReason: "",
+  setAuthPromptReason: () => {},
 });
 
 export function ShopProvider({ children }) {
@@ -36,6 +44,9 @@ export function ShopProvider({ children }) {
   const [wishlist, setWishlist] = useState([]);
   const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+  const [user, setUser] = useState(null);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authPromptReason, setAuthPromptReason] = useState("");
   const [mounted, setMounted] = useState(false);
 
   const showToast = (msg) => {
@@ -45,10 +56,62 @@ export function ShopProvider({ children }) {
     }, 3200);
   };
 
+  const login = (userData) => {
+    const fullUser = {
+      name: userData?.name || "Customer",
+      email: userData?.email || "customer@lovokit.in",
+      phone: userData?.phone || "+91 98000 00000",
+      company: userData?.company || "Lovosis Technology Pvt Ltd",
+      gstin: userData?.gstin || "27AABCL1234F1Z5",
+      address: userData?.address || {
+        street: "Office 402, Technology Park, Phase 1",
+        landmark: "Near Hinjawadi IT Park",
+        city: "Pune",
+        state: "Maharashtra",
+        pincode: "411057",
+        country: "India",
+      },
+      ...userData,
+    };
+    setUser(fullUser);
+    try {
+      localStorage.setItem("lovokit_user", JSON.stringify(fullUser));
+    } catch (e) {
+      console.error("Failed to save user to localStorage:", e);
+    }
+  };
+
+  const logout = () => {
+    setUser(null);
+    try {
+      localStorage.removeItem("lovokit_user");
+    } catch (e) {
+      console.error("Failed to remove user from localStorage:", e);
+    }
+    showToast("Signed out successfully");
+  };
+
+  const updateUser = (updatedFields) => {
+    setUser((prev) => {
+      const merged = { ...prev, ...updatedFields };
+      try {
+        localStorage.setItem("lovokit_user", JSON.stringify(merged));
+      } catch (e) {
+        console.error("Failed to update user in localStorage:", e);
+      }
+      return merged;
+    });
+    showToast("Profile details updated successfully!");
+  };
+
   // Hydrate from localStorage once on client mount
   useEffect(() => {
     setMounted(true);
     try {
+      const savedUser = localStorage.getItem("lovokit_user");
+      if (savedUser) {
+        setUser(JSON.parse(savedUser));
+      }
       const savedCart = localStorage.getItem("lovokit_cart");
       if (savedCart) {
         setCart(JSON.parse(savedCart));
@@ -213,6 +276,14 @@ export function ShopProvider({ children }) {
         setCartDrawerOpen,
         toastMessage,
         showToast,
+        user,
+        login,
+        logout,
+        updateUser,
+        authModalOpen,
+        setAuthModalOpen,
+        authPromptReason,
+        setAuthPromptReason,
       }}
     >
       {children}
