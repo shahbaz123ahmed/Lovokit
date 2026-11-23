@@ -226,3 +226,15 @@ body {
 .animate-marquee-right:hover {
   animation-play-state: paused;
 }
+
+.animate-category-marquee {
+  display: flex;
+  width: max-content;
+  animation: marqueeScrollLeft 22s linear infinite;
+  will-change: transform;
+}
+
+.animate-category-marquee:hover,
+.animate-category-marquee:active {
+  animation-play-state: paused;
+}

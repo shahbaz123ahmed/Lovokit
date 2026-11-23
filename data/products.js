@@ -13,12 +13,13 @@ export const categoriesData = [
 
 export const brandsData = [
   "All Brands",
-  "LOVOKIT",
+  "LOVOSIS",
+  "MATRIX",
   "OWON",
   "RIGOL",
   "SIGLENT",
   "UNI-T",
-  "MATRIX",
+  "LOVOKIT",
   "Keysight",
   "Tektronix",
 ];

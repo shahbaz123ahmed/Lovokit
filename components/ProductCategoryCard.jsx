@@ -2,6 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 export default function ProductCategoryCard({
@@ -10,13 +11,16 @@ export default function ProductCategoryCard({
   onSelect,
 }) {
   const IconComponent = category.icon;
+  const href = category.href || `/products?category=${category.id}`;
 
   return (
-    <button
-      type="button"
-      onClick={onSelect}
+    <Link
+      href={href}
+      onClick={(e) => {
+        if (onSelect) onSelect();
+      }}
       aria-label={`View ${category.title}`}
-      className={`group relative rounded-[22px] sm:rounded-[24px] p-2.5 sm:p-3 flex flex-col justify-between transition-all duration-300 text-left focus:outline-none focus:ring-2 focus:ring-[#FFC400]/60 min-h-[230px] sm:min-h-[250px] xl:min-h-[270px] w-full overflow-hidden ${
+      className={`group relative rounded-[22px] sm:rounded-[24px] p-2.5 sm:p-3 flex flex-col justify-between transition-all duration-300 text-left focus:outline-none focus:ring-2 focus:ring-[#FFC400]/60 min-h-[230px] sm:min-h-[250px] xl:min-h-[270px] w-full overflow-hidden block ${
         isActive
           ? "bg-[#0B0E17] border-2 border-[#FFC400] shadow-[0_12px_36px_rgba(255,196,0,0.28)] scale-[1.02] z-10"
           : "bg-white border border-slate-200/90 hover:border-[#FFC400] shadow-[0_4px_16px_rgba(0,0,0,0.04)] hover:shadow-[0_10px_28px_rgba(255,196,0,0.12)] hover:-translate-y-1"
@@ -78,6 +82,6 @@ export default function ProductCategoryCard({
           </div>
         )}
       </div>
-    </button>
+    </Link>
   );
 }

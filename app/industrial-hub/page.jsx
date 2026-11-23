@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -43,68 +43,24 @@ import Footer from "@/components/Footer";
 // =============================================================================
 // HERO CAROUSEL SLIDES (HOME PAGE STYLE, INDUSTRIAL THEME)
 // =============================================================================
-export const industrialSlides = [
-  {
-    id: 1,
-    badge: "LOVOKIT INDUSTRIAL HUB",
-    icon: Factory,
-    headingLine1: "Turnkey Industrial Test.",
-    headingLine2: "Measurement & Automation.",
-    subheadingTag: null,
-    description:
-      "High-precision diagnostic benches, automated QC test fixtures, and syllabus-aligned university laboratories with NABL calibration and 24h Pune depot dispatch.",
-    primaryBtn: { text: "Request Enterprise RFP" },
-    secondaryBtn: { text: "Explore Sectors", href: "#sectors" },
-    trustBadges: [
-      { icon: ShieldCheck, label: "NABL 17025 Calibrated" },
-      { icon: Truck, label: "24h Pune Dispatch" },
-      { icon: Wrench, label: "On-Site Commissioning" },
-    ],
-    bgImage: "/images/industrial-hero-desktop.webp",
-    mobileImage: "/images/industrial-hero-mobile.jpg",
-    alt: "LOVOKIT Industrial Hub - Turnkey Industrial Test, Measurement & Automation.",
-  },
-  {
-    id: 2,
-    badge: "AUTOMOTIVE & EV SUITE",
-    icon: Car,
-    headingLine1: "Advanced Powertrain &",
-    headingLine2: "Inverter Diagnostic Benches",
-    subheadingTag: "High-Voltage • 1500V Probing • CAN/LIN",
-    description:
-      "Engineered for EV battery management systems, traction motor drive validation, and automated functional quality control fixtures with custom differential probing.",
-    primaryBtn: { text: "Configure EV Station" },
-    secondaryBtn: { text: "View EV Packages", href: "#packages" },
-    trustBadges: [
-      { icon: ShieldCheck, label: "Automotive Grade" },
-      { icon: Zap, label: "High-Voltage Ready" },
-      { icon: Headphones, label: "Field Engineers" },
-    ],
-    bgImage: "/images/2slide.webp",
-    mobileImage: "/images/m2.png",
-    alt: "LOVOKIT Advanced Powertrain & Inverter Diagnostic Benches.",
-  },
-  {
-    id: 3,
-    badge: "ACADEMIC & R&D LABS",
-    icon: GraduationCap,
-    headingLine1: "Turnkey Lab Solutions for",
-    headingLine2: "Institutes & Universities",
-    subheadingTag: null,
-    description:
-      "Standardized 10/20/30-station educational lab bundles with student-safe testbenches, curriculum experiment manuals, and master faculty hubs.",
-    primaryBtn: { text: "Request Institutional RFP" },
-    secondaryBtn: { text: "View Lab Bundles", href: "#packages" },
-    trustBadges: [
-      { icon: Package, label: "10-Bench Bundles" },
-      { icon: FileText, label: "Syllabus Aligned" },
-      { icon: ShieldCheck, label: "Student Protected" },
-    ],
-    bgImage: "/images/3slide.webp",
-    mobileImage: "/images/m3.png",
-    alt: "LOVOKIT Turnkey Lab Solutions for Institutes & Universities.",
-  },
-];
+export const industrialHeroData = {
+  badge: "LOVOKIT INDUSTRIAL HUB",
+  icon: Factory,
+  headingLine1: "Lovokit Industrial Solutions.",
+  headingLine2: "Knowledge Base.",
+  description:
+    "High-precision diagnostic benches, automated QC test fixtures, and syllabus-aligned university laboratories with NABL calibration and 24h Pune depot dispatch.",
+  btnText: "Get in Touch",
+  trustBadges: [
+    { icon: ShieldCheck, label: "NABL 17025 Calibrated" },
+    { icon: Truck, label: "24h Pune Dispatch" },
+    { icon: Wrench, label: "On-Site Commissioning" },
+  ],
+  image: "/images/industrial-hero.webp",
+  alt: "LOVOKIT Industrial Hub - Integrated Industrial Test, Measurement & Automation.",
+};
+
+export const industrialSlides = [industrialHeroData];
 
 // =============================================================================
 // INDUSTRIAL SECTORS DATA
@@ -183,7 +139,7 @@ export const industrialSectors = [
   {
     id: "academic-research",
     name: "Academic & R&D Labs",
-    tagline: "Turnkey University Engineering Benches & Faculty Workstations",
+    tagline: "Integrated University Engineering Benches & Faculty Workstations",
     icon: GraduationCap,
     image: "/images/solutions/academic-labs.jpg",
     badge: "INSTITUTIONAL STANDARD",
@@ -208,7 +164,7 @@ export const industrialSectors = [
       },
       {
         model: "LOVOKIT Lab Rack",
-        type: "Turnkey Power & DAQ Bench",
+        type: "Integrated Power & DAQ Bench",
         role: "Universal Student Station",
       },
     ],
@@ -248,7 +204,7 @@ export const industrialSectors = [
       },
     ],
     caseStudy:
-      "Supported Bangalore RF hardware startup with turnkey spectrum analysis and RF signal source benches.",
+      "Supported Bangalore RF hardware startup with integrated spectrum analysis and RF signal source benches.",
   },
   {
     id: "renewable-power",
@@ -323,112 +279,139 @@ export const industrialSectors = [
 ];
 
 // =============================================================================
-// TURNKEY LAB PACKAGES (PRE-ENGINEERED BUNDLES)
+// INDUSTRIAL KNOWLEDGE & LATEST INSIGHTS (EDIT IMAGES IN /public/images/blog/)
 // =============================================================================
-export const turnkeyPackages = [
-  {
-    id: "package-ev",
-    title: "Tier-1 Automotive & EV Diagnostic Station",
-    category: "Automotive / EV",
-    tag: "MOST POPULAR FOR EV",
-    priceRange: "₹4,85,000",
-    leadTime: "3 - 5 Days Delivery",
-    image: "/images/featured/owon-exact-transparent.png",
-    description:
-      "Comprehensive high-voltage diagnostic station engineered specifically for EV motor controller testing, inverter development, and BMS cell array validation.",
-    includedGear: [
-      "OWON XDS3302 (300 MHz, 2-Ch, 14-bit ADC Scope)",
-      "High-Voltage Differential Probe Pair (1000V Category III)",
-      "SIGLENT SPD3303X-E Triple-Output Programmable DC Supply",
-      "UNI-T UT216C 600A True RMS Clamp & Inrush Meter",
-      "Pre-configured Anti-Static Laboratory Bench Mat & Grounding Kit",
-      "1-Year NABL Traceable Calibration Certificate Included",
-    ],
+export const industrialArticles = {
+  featured: {
+    category: "Power Tools & Technology",
+    categoryColor: "bg-red-600",
+    title: "The Future of Lithium-Ion Technology in Heavy-Duty Power Tools",
+    date: "Aug 10",
+    readTime: "12 min read",
+    image: "/images/lithium.png",
   },
-  {
-    id: "package-smt",
-    title: "Electronics Production & SMT QC Testbench",
-    category: "Manufacturing / EMS",
-    tag: "HIGH-THROUGHPUT QC",
-    priceRange: "₹2,95,000",
-    leadTime: "24 - 48 Hours Dispatch",
-    image: "/images/categories/oscilloscope-transparent.png",
-    description:
-      "Turnkey assembly and quality-assurance bench designed for electronic contract manufacturers. Maximizes test coverage and minimizes operator cycle times.",
-    includedGear: [
-      "OWON XDS3204E (200 MHz, 4-Channel Touchscreen Scope)",
-      "UNI-T UTG962E 60 MHz Dual-Channel Waveform Generator",
-      "UNI-T UT89X True RMS Industrial Digital Multimeter",
-      "Precision Solder Smoke Extractor & High-Lumen Magnifier",
-      "Python / SCPI Automated Test Suite Drivers for PC Logging",
-      "Factory Direct Calibration & Installation Guidance",
-    ],
-  },
-  {
-    id: "package-academic",
-    title: "Academic Benchmark Lab (10-Station Suite)",
-    category: "Education / Research",
-    tag: "INSTITUTIONAL BUNDLE",
-    priceRange: "₹9,50,000",
-    leadTime: "7 - 10 Days Deployment",
-    image: "/images/featured/oscilloscope-visual.png",
-    description:
-      "Standardized 10-bench engineering laboratory package for universities, polytechnics, and R&D centers. Complete with syllabus experiment sets and master station.",
-    includedGear: [
-      "10x OWON XDS3104E (100 MHz, 4-Ch Digital Storage Scopes)",
-      "10x Regulated Linear 30V/5A Bench DC Power Supplies",
-      "10x High-Precision Digital Multimeters with Temp Probes",
-      "1x Master Faculty Instructor Bench with Projection Hub",
-      "Printed Lab Curriculum Manuals & Sample Circuit Boards",
-      "On-Campus Faculty Training & Commissioning by LOVOKIT Engineers",
-    ],
-  },
-];
+  latest: [
+    {
+      id: 1,
+      title: "Understanding OSHA Fall Protection & Industrial PPE Standards",
+      date: "Aug 10",
+      readTime: "18 min read",
+      image: "/images/blog/osha-ppe-standards.jpg",
+    },
+    {
+      id: 2,
+      title: "5 Tips to Organize Your Tool Workshop for Maximum Throughput",
+      date: "Aug 10",
+      readTime: "9 min read",
+      image: "/images/blog/workshop-organization.jpg",
+    },
+    {
+      id: 3,
+      title: "Advanced Welding Techniques for Structural Integrity",
+      date: "Aug 10",
+      readTime: "14 min read",
+      image: "/images/blog/advanced-welding.jpg",
+    },
+    {
+      id: 4,
+      title: "Calibrating Instruments for Aerospace Manufacturing",
+      date: "Aug 10",
+      readTime: "16 min read",
+      image: "/images/blog/calibrating-instruments.jpg",
+    },
+  ],
+};
 
 // =============================================================================
 // MAIN COMPONENT
 // =============================================================================
 export default function IndustrialHubPage() {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [touchStart, setTouchStart] = useState(null);
-  const [touchEnd, setTouchEnd] = useState(null);
   const [activeSectorId, setActiveSectorId] = useState("automotive-ev");
   const [rfpModalOpen, setRfpModalOpen] = useState(false);
   const [selectedPackageForQuote, setSelectedPackageForQuote] = useState(null);
   const [rfpSubmitted, setRfpSubmitted] = useState(false);
 
-  // Auto-play interval: cycles every 6.5s
+  // Sector Tabs: Moveable / Drag-to-Scroll & Navigation State
+  const tabsContainerRef = useRef(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+  const [isDraggingTabs, setIsDraggingTabs] = useState(false);
+  const [tabsStartX, setTabsStartX] = useState(0);
+  const [tabsScrollLeftStart, setTabsScrollLeftStart] = useState(0);
+  const [hasDraggedTabs, setHasDraggedTabs] = useState(false);
+
+  const updateTabsScrollState = () => {
+    if (!tabsContainerRef.current) return;
+    const { scrollLeft, scrollWidth, clientWidth } = tabsContainerRef.current;
+    setCanScrollLeft(scrollLeft > 8);
+    setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 8);
+  };
+
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % industrialSlides.length);
-    }, 6500);
-    return () => clearInterval(timer);
+    updateTabsScrollState();
+    window.addEventListener("resize", updateTabsScrollState);
+    return () => window.removeEventListener("resize", updateTabsScrollState);
   }, []);
 
-  const goToPrev = () => {
-    setCurrentSlide((prev) => (prev === 0 ? industrialSlides.length - 1 : prev - 1));
+  const handleScrollTabs = (direction) => {
+    if (!tabsContainerRef.current) return;
+    const scrollOffset = direction === "left" ? -280 : 280;
+    tabsContainerRef.current.scrollBy({
+      left: scrollOffset,
+      behavior: "smooth",
+    });
+    setTimeout(updateTabsScrollState, 350);
   };
 
-  const goToNext = () => {
-    setCurrentSlide((prev) => (prev + 1) % industrialSlides.length);
+  const handleTabsMouseDown = (e) => {
+    if (!tabsContainerRef.current) return;
+    setIsDraggingTabs(true);
+    setHasDraggedTabs(false);
+    setTabsStartX(e.pageX - tabsContainerRef.current.offsetLeft);
+    setTabsScrollLeftStart(tabsContainerRef.current.scrollLeft);
   };
 
-  const minSwipeDistance = 50;
-
-  const onTouchStart = (e) => {
-    setTouchEnd(null);
-    setTouchStart(e.targetTouches[0].clientX);
+  const handleTabsMouseMove = (e) => {
+    if (!isDraggingTabs || !tabsContainerRef.current) return;
+    e.preventDefault();
+    const currentX = e.pageX - tabsContainerRef.current.offsetLeft;
+    const distance = (currentX - tabsStartX) * 1.5;
+    if (Math.abs(distance) > 5) {
+      setHasDraggedTabs(true);
+    }
+    tabsContainerRef.current.scrollLeft = tabsScrollLeftStart - distance;
+    updateTabsScrollState();
   };
 
-  const onTouchMove = (e) => setTouchEnd(e.targetTouches[0].clientX);
+  const handleTabsMouseUpOrLeave = () => {
+    setIsDraggingTabs(false);
+  };
 
-  const onTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
-    const distance = touchStart - touchEnd;
-    const isLeftSwipe = distance > minSwipeDistance;
-    const isRightSwipe = distance < -minSwipeDistance;
-    if (isLeftSwipe) goToNext();
-    if (isRightSwipe) goToPrev();
+  const handleSectorTabSelect = (sectorId, e) => {
+    if (hasDraggedTabs) return;
+    setActiveSectorId(sectorId);
+    if (e?.currentTarget) {
+      e.currentTarget.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+        inline: "center",
+      });
+      setTimeout(updateTabsScrollState, 350);
+    }
+  };
+
+  // Wholesale Digest Newsletter State
+  const [digestEmail, setDigestEmail] = useState("");
+  const [digestSubscribed, setDigestSubscribed] = useState(false);
+
+  const handleDigestSubmit = (e) => {
+    e.preventDefault();
+    if (digestEmail.trim()) {
+      setDigestSubscribed(true);
+      setTimeout(() => {
+        setDigestEmail("");
+      }, 3000);
+    }
   };
 
   // Form State
@@ -469,207 +452,96 @@ export default function IndustrialHubPage() {
       <Navbar />
 
       {/* ===================================================================== */}
-      {/* 2. COMPACT INDUSTRIAL HERO CAROUSEL (HOME PAGE STYLE, REDUCED HEIGHT) */}
+      {/* 2. INDUSTRIAL HERO SECTION (COMPACT SLEEK HEIGHT)                     */}
       {/* ===================================================================== */}
-      <section
-        onTouchStart={onTouchStart}
-        onTouchMove={onTouchMove}
-        onTouchEnd={onTouchEnd}
-        className="relative w-full overflow-hidden bg-white select-none group border-b border-slate-100 sm:flex sm:items-center sm:min-h-[460px] lg:min-h-[480px]"
-      >
+      <section className="relative w-full overflow-hidden bg-white group border-b border-slate-100 sm:flex sm:items-center sm:min-h-[440px] lg:min-h-[470px]">
         {/* 1. Desktop Full-Width Studio Background Banner (Hidden on Mobile) */}
         <div className="hidden sm:block absolute inset-0 w-full h-full pointer-events-none select-none">
-          {industrialSlides.map((slide, idx) => (
-            <div
-              key={slide.id}
-              className={`absolute inset-0 w-full h-full transition-opacity duration-500 ease-in-out ${idx === currentSlide ? "opacity-100 z-0" : "opacity-0 -z-10"
-                }`}
-            >
-              <Image
-                src={slide.bgImage}
-                alt={slide.alt}
-                fill
-                priority={true}
-                loading="eager"
-                unoptimized
-                sizes="100vw"
-                className="object-cover object-right select-none"
-              />
-            </div>
-          ))}
+          <Image
+            src="/images/industrial.png"
+            alt="LOVOKIT Industrial Hub - Integrated Industrial Test, Measurement & Automation."
+            fill
+            priority={true}
+            loading="eager"
+            unoptimized
+            sizes="100vw"
+            className="object-cover object-right select-none"
+          />
         </div>
 
-        {/* 2. Main Content Container (Text, Heading, Buttons & Badges on top) */}
-        <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 pt-5 pb-2 sm:py-10 lg:py-12 relative z-10">
-          {industrialSlides.map((slide, idx) => {
-            if (idx !== currentSlide) return null;
-            return (
-              <div
-                key={`slide-content-${slide.id}`}
-                className="max-w-md sm:max-w-xl lg:max-w-2xl flex flex-col justify-center items-start text-left space-y-3 sm:space-y-3.5 lg:space-y-4"
-              >
-                {/* Top Yellow Pill Badge - Flush Left */}
-                <div className="flex items-center animate-hero-badge">
-                  <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-[#FFC400] text-black text-[10px] sm:text-[11px] font-black tracking-wider uppercase px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full shadow-xs">
-                    <span className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-black/15 flex items-center justify-center shrink-0">
-                      <slide.icon className="w-2 sm:w-2.5 h-2 sm:h-2.5 stroke-[3] text-black" />
-                    </span>
-                    <span>{slide.badge}</span>
-                  </div>
-                </div>
-
-                {/* Heading in EXACTLY 2 Lines - Flush Left */}
-                <h1 className="text-2xl sm:text-3xl md:text-[2.2rem] lg:text-[2.6rem] xl:text-[2.85rem] font-black tracking-tight text-slate-950 leading-[1.14] text-left">
-                  <span className="block sm:whitespace-nowrap animate-hero-heading-1">
-                    {slide.headingLine1}
-                  </span>
-                  <span className="block sm:whitespace-nowrap mt-1 sm:mt-2 text-[#FFB800] drop-shadow-xs animate-hero-heading-2">
-                    {slide.headingLine2}
-                  </span>
-                </h1>
-
-                {/* Subheading Tag when present - Flush Left */}
-                {slide.subheadingTag && (
-                  <div className="inline-flex items-center gap-2 animate-hero-subtag">
-                    <span className="text-[10px] sm:text-xs font-black tracking-wider uppercase text-slate-900 bg-amber-100/70 border border-[#FFC400] px-3 sm:px-3.5 py-0.5 sm:py-1 rounded-full shadow-2xs">
-                      {slide.subheadingTag}
-                    </span>
-                  </div>
-                )}
-
-                {/* Description - Flush Left */}
-                <p className="text-xs sm:text-sm lg:text-[14.5px] text-slate-700 sm:text-slate-600 font-medium leading-relaxed max-w-sm sm:max-w-lg text-left animate-hero-desc">
-                  {slide.description}
-                </p>
-
-                {/* Call to Action Buttons - Flush Left, Natural Pill Widths */}
-                <div className="flex flex-wrap items-center justify-start gap-2.5 sm:gap-4 pt-1 sm:pt-2 animate-hero-actions">
-                  {/* Button 1: Primary Yellow Pill */}
-                  <button
-                    type="button"
-                    onClick={() => handleOpenRfp()}
-                    className="inline-flex items-center justify-center gap-1.5 sm:gap-2 bg-[#FFC400] hover:bg-[#e6b000] text-black font-extrabold text-xs sm:text-sm tracking-wide px-5 sm:px-7 py-2.5 sm:py-3 rounded-full transition-all duration-200 shadow-md hover:shadow-lg active:scale-95 text-center shrink-0 cursor-pointer"
-                  >
-                    <span>{slide.primaryBtn.text}</span>
-                    <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]" />
-                  </button>
-
-                  {/* Button 2: Secondary White Pill with black outline */}
-                  <a
-                    href={slide.secondaryBtn.href}
-                    className="inline-flex items-center justify-center gap-1.5 sm:gap-2 bg-white hover:bg-slate-50 text-slate-950 font-extrabold text-xs sm:text-sm tracking-wide px-5 sm:px-7 py-2.5 sm:py-3 rounded-full border border-slate-900 shadow-xs transition-all duration-200 active:scale-95 text-center shrink-0 cursor-pointer"
-                  >
-                    <span>{slide.secondaryBtn.text}</span>
-                  </a>
-                </div>
-
-                {/* Trust Highlights Strip below buttons - Flush Left */}
-                <div className="flex flex-wrap items-center justify-start gap-x-3 gap-y-1.5 sm:gap-5 pt-1.5 sm:pt-2.5 text-[11px] sm:text-xs font-bold text-slate-800 animate-hero-trust">
-                  {slide.trustBadges.map((badge, bIdx) => (
-                    <React.Fragment key={bIdx}>
-                      <div className="flex items-center gap-1.5 shrink-0">
-                        <badge.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#FFB800] shrink-0" />
-                        <span>{badge.label}</span>
-                      </div>
-
-                      {bIdx < slide.trustBadges.length - 1 && (
-                        <div className="h-3.5 w-[1px] bg-slate-300/80 hidden sm:block" />
-                      )}
-                    </React.Fragment>
-                  ))}
-                </div>
+        {/* 2. Main Content Container (Text, Heading, Button & Trust Badges) */}
+        <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-12 lg:px-16 pt-4 pb-2 sm:py-8 lg:py-10 relative z-10 select-text">
+          <div className="max-w-md sm:max-w-xl lg:max-w-2xl flex flex-col justify-center items-start text-left space-y-2.5 sm:space-y-3 lg:space-y-3.5 select-text">
+            {/* Top Yellow Pill Badge - Flush Left */}
+            <div className="flex items-center animate-hero-badge">
+              <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-[#FFC400] text-black text-[10px] sm:text-[11px] font-black tracking-wider uppercase px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full shadow-xs">
+                <span className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-black/15 flex items-center justify-center shrink-0">
+                  <Factory className="w-2 sm:w-2.5 h-2 sm:h-2.5 stroke-[3] text-black" />
+                </span>
+                <span>LOVOKIT INDUSTRIAL HUB</span>
               </div>
-            );
-          })}
+            </div>
+
+            {/* Heading in EXACTLY 2 Lines - Flush Left */}
+            <h1 className="text-2xl sm:text-3xl md:text-[2.1rem] lg:text-[2.4rem] xl:text-[2.65rem] font-black tracking-tight text-slate-950 leading-[1.14] text-left">
+              <span className="block sm:whitespace-nowrap animate-hero-heading-1">
+                Lovokit Industrial Solutions.
+              </span>
+              <span className="block sm:whitespace-nowrap mt-1 sm:mt-2 text-[#FFB800] drop-shadow-xs animate-hero-heading-2">
+                Knowledge Base.
+              </span>
+            </h1>
+
+            {/* Description - Flush Left */}
+            <p className="text-xs sm:text-sm lg:text-[14px] text-slate-700 sm:text-slate-600 font-medium leading-relaxed max-w-sm sm:max-w-lg text-left animate-hero-desc">
+              High-precision diagnostic benches, automated QC test fixtures, and syllabus-aligned university laboratories with NABL calibration and 24h Pune depot dispatch.
+            </p>
+
+            {/* Single Button: Get in Touch (Redirects to /contact page) */}
+            <div className="flex items-center justify-start pt-1 sm:pt-1.5 animate-hero-actions">
+              <Link
+                href="/contact"
+                className="inline-flex items-center justify-center gap-1.5 sm:gap-2 bg-[#FFC400] hover:bg-[#e6b000] text-black font-extrabold text-xs sm:text-sm tracking-wide px-6 sm:px-7 py-2.5 sm:py-3 rounded-full transition-all duration-200 shadow-md hover:shadow-lg active:scale-95 text-center shrink-0 cursor-pointer"
+              >
+                <span>Get in Touch</span>
+                <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]" />
+              </Link>
+            </div>
+
+            {/* Trust Highlights Strip below button - Flush Left */}
+            <div className="flex flex-wrap items-center justify-start gap-x-3 gap-y-1.5 sm:gap-5 pt-1 sm:pt-2 text-[11px] sm:text-xs font-bold text-slate-800 animate-hero-trust">
+              <div className="flex items-center gap-1.5 shrink-0">
+                <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#FFB800] shrink-0" />
+                <span>NABL 17025 Calibrated</span>
+              </div>
+              <div className="h-3.5 w-[1px] bg-slate-300/80 hidden sm:block" />
+              <div className="flex items-center gap-1.5 shrink-0">
+                <Truck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#FFB800] shrink-0" />
+                <span>24h Pune Dispatch</span>
+              </div>
+              <div className="h-3.5 w-[1px] bg-slate-300/80 hidden sm:block" />
+              <div className="flex items-center gap-1.5 shrink-0">
+                <Wrench className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#FFB800] shrink-0" />
+                <span>On-Site Commissioning</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* 3. Mobile Rounded Image Card Display (Below text, matching Home Page) */}
-        <div className="sm:hidden px-4 pt-3 pb-2 w-full relative z-10">
-          <div className="relative w-full h-[230px] xs:h-[270px] rounded-[22px] overflow-hidden bg-white border border-slate-200/80 shadow-[0_8px_25px_rgba(0,0,0,0.08)]">
-            {industrialSlides.map((slide, idx) => (
-              <div
-                key={`mobile-img-${slide.id}`}
-                className={`absolute inset-0 w-full h-full transition-opacity duration-500 ease-in-out ${idx === currentSlide ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"
-                  }`}
-              >
-                <Image
-                  src={slide.mobileImage || slide.bgImage}
-                  alt={slide.alt}
-                  fill
-                  priority={true}
-                  loading="eager"
-                  unoptimized
-                  sizes="100vw"
-                  className="object-cover object-center select-none"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* 4. Desktop Slider Navigation Controls */}
-        <button
-          onClick={goToPrev}
-          aria-label="Previous Slide"
-          className="hidden sm:block absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-30 p-2 text-slate-600 hover:text-black transition-all hover:scale-125 active:scale-90 cursor-pointer focus:outline-none"
-        >
-          <ChevronLeft className="w-8 h-8 sm:w-10 sm:h-10 stroke-[2] sm:stroke-[2.2] drop-shadow-xs" />
-        </button>
-
-        <button
-          onClick={goToNext}
-          aria-label="Next Slide"
-          className="hidden sm:block absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-30 p-2 text-slate-600 hover:text-black transition-all hover:scale-125 active:scale-90 cursor-pointer focus:outline-none"
-        >
-          <ChevronRight className="w-8 h-8 sm:w-10 sm:h-10 stroke-[2] sm:stroke-[2.2] drop-shadow-xs" />
-        </button>
-
-        {/* 5. Desktop Carousel Dots */}
-        <div className="hidden sm:flex absolute bottom-4 sm:bottom-5 left-1/2 -translate-x-1/2 items-center gap-2 z-20">
-          {industrialSlides.map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => setCurrentSlide(idx)}
-              aria-label={`Go to slide ${idx + 1}`}
-              className={`transition-all duration-300 cursor-pointer ${idx === currentSlide
-                  ? "w-6 h-2 rounded-full bg-[#FFC400] shadow-xs"
-                  : "w-2 h-2 rounded-full bg-slate-300 hover:bg-slate-400"
-                }`}
+        <div className="sm:hidden px-4 pt-2 pb-5 w-full relative z-10">
+          <div className="relative w-full h-[190px] xs:h-[220px] rounded-[20px] overflow-hidden bg-white border border-slate-200/80 shadow-[0_6px_20px_rgba(0,0,0,0.06)]">
+            <Image
+              src="/images/m2.png"
+              alt="LOVOKIT Industrial Hub - Integrated Industrial Test, Measurement & Automation."
+              fill
+              priority={true}
+              loading="eager"
+              unoptimized
+              sizes="100vw"
+              className="object-cover object-center select-none"
             />
-          ))}
-        </div>
-
-        {/* 6. Mobile Bottom Slider Bar (< ••• >) directly below image card */}
-        <div className="sm:hidden w-full flex items-center justify-center gap-3 pt-3 pb-6 relative z-30">
-          <button
-            onClick={goToPrev}
-            aria-label="Previous Slide"
-            className="w-8 h-8 rounded-full bg-slate-800 hover:bg-[#FFC400] hover:text-black text-white flex items-center justify-center transition-all active:scale-90 cursor-pointer shadow-sm"
-          >
-            <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
-          </button>
-
-          <div className="flex items-center gap-1.5">
-            {industrialSlides.map((_, idx) => (
-              <button
-                key={idx}
-                onClick={() => setCurrentSlide(idx)}
-                aria-label={`Go to slide ${idx + 1}`}
-                className={`transition-all duration-300 cursor-pointer ${idx === currentSlide
-                    ? "w-6 h-2 rounded-full bg-[#FFC400] shadow-xs"
-                    : "w-2 h-2 rounded-full bg-slate-300 hover:bg-slate-400"
-                  }`}
-              />
-            ))}
           </div>
-
-          <button
-            onClick={goToNext}
-            aria-label="Next Slide"
-            className="w-8 h-8 rounded-full bg-slate-800 hover:bg-[#FFC400] hover:text-black text-white flex items-center justify-center transition-all active:scale-90 cursor-pointer shadow-sm"
-          >
-            <ChevronRight className="w-4 h-4 stroke-[2.5]" />
-          </button>
         </div>
       </section>
 
@@ -695,29 +567,75 @@ export default function IndustrialHubPage() {
             </p>
           </div>
 
-          {/* Sector Navigation Tabs (Horizontal Scroll on Mobile) */}
-          <div className="flex items-center gap-2.5 overflow-x-auto no-scrollbar pb-4 mb-8 border-b border-slate-200">
-            {industrialSectors.map((sector) => {
-              const Icon = sector.icon;
-              const isActive = activeSectorId === sector.id;
-              return (
-                <button
-                  key={sector.id}
-                  type="button"
-                  onClick={() => setActiveSectorId(sector.id)}
-                  className={`flex items-center gap-2 px-5 py-3 rounded-full text-xs font-black tracking-wider uppercase transition-all duration-200 shrink-0 cursor-pointer ${isActive
+          {/* Moveable Sector Navigation Tabs (Drag-to-Scroll + Left/Right Arrow Navigation) */}
+          <div className="relative mb-8 pb-3 border-b border-slate-200 group/tabs">
+            {/* Left Scroll Navigation Arrow Button */}
+            {canScrollLeft && (
+              <button
+                type="button"
+                onClick={() => handleScrollTabs("left")}
+                aria-label="Move tabs left"
+                className="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-white/95 hover:bg-[#FFC400] text-slate-800 hover:text-black border border-slate-200/90 shadow-lg flex items-center justify-center transition-all duration-200 cursor-pointer active:scale-95"
+              >
+                <ChevronLeft className="w-5 h-5 stroke-[2.5]" />
+              </button>
+            )}
+
+            {/* Left Gradient Edge Fade */}
+            {canScrollLeft && (
+              <div className="absolute left-0 top-0 bottom-3 w-14 bg-gradient-to-r from-[#F8F9FA] via-[#F8F9FA]/80 to-transparent pointer-events-none z-10" />
+            )}
+
+            {/* Moveable & Draggable Horizontal Tabs Bar */}
+            <div
+              ref={tabsContainerRef}
+              onMouseDown={handleTabsMouseDown}
+              onMouseMove={handleTabsMouseMove}
+              onMouseUp={handleTabsMouseUpOrLeave}
+              onMouseLeave={handleTabsMouseUpOrLeave}
+              onScroll={updateTabsScrollState}
+              className={`flex items-center gap-2.5 overflow-x-auto no-scrollbar scroll-smooth py-1 px-1 select-none ${isDraggingTabs ? "cursor-grabbing" : "cursor-grab"
+                }`}
+            >
+              {industrialSectors.map((sector) => {
+                const Icon = sector.icon;
+                const isActive = activeSectorId === sector.id;
+                return (
+                  <button
+                    key={sector.id}
+                    type="button"
+                    onClick={(e) => handleSectorTabSelect(sector.id, e)}
+                    className={`flex items-center gap-2 px-5 py-3 rounded-full text-xs font-black tracking-wider uppercase transition-all duration-200 shrink-0 cursor-pointer ${isActive
                       ? "bg-slate-950 text-white shadow-lg shadow-slate-950/20 scale-[1.02]"
                       : "bg-slate-100 hover:bg-slate-200/80 text-slate-700"
-                    }`}
-                >
-                  <Icon
-                    className={`w-4 h-4 ${isActive ? "text-[#FFC400]" : "text-slate-500"
                       }`}
-                  />
-                  <span>{sector.name}</span>
-                </button>
-              );
-            })}
+                  >
+                    <Icon
+                      className={`w-4 h-4 ${isActive ? "text-[#FFC400]" : "text-slate-500"
+                        }`}
+                    />
+                    <span>{sector.name}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Right Gradient Edge Fade */}
+            {canScrollRight && (
+              <div className="absolute right-0 top-0 bottom-3 w-14 bg-gradient-to-l from-[#F8F9FA] via-[#F8F9FA]/80 to-transparent pointer-events-none z-10" />
+            )}
+
+            {/* Right Scroll Navigation Arrow Button */}
+            {canScrollRight && (
+              <button
+                type="button"
+                onClick={() => handleScrollTabs("right")}
+                aria-label="Move tabs right"
+                className="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-white/95 hover:bg-[#FFC400] text-slate-800 hover:text-black border border-slate-200/90 shadow-lg flex items-center justify-center transition-all duration-200 cursor-pointer active:scale-95"
+              >
+                <ChevronRight className="w-5 h-5 stroke-[2.5]" />
+              </button>
+            )}
           </div>
 
           {/* Active Sector Detailed Blueprint Showcase */}
@@ -815,119 +733,96 @@ export default function IndustrialHubPage() {
       </section>
 
       {/* ===================================================================== */}
-      {/* 4. TURNKEY LAB PACKAGES (PRE-CONFIGURED BENCH BUNDLES)                 */}
+      {/* 4. INDUSTRY INSIGHTS & ENGINEERING ARTICLES (PREMIUM EDITORIAL)      */}
       {/* ===================================================================== */}
-      <section id="packages" className="py-16 sm:py-24 bg-[#F2F4F7] relative border-t border-slate-200/80">
+      <section className="py-14 sm:py-20 bg-white relative border-t border-slate-200/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 border border-amber-300 text-amber-900 text-[11px] font-black tracking-wider uppercase mb-3">
-                <Layers className="w-3.5 h-3.5 text-amber-700" />
-                <span>PRE-ENGINEERED WORKBENCHES</span>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-stretch">
+
+            {/* Left Featured Card (Big Hero Magazine Feature) */}
+            <div className="lg:col-span-7 xl:col-span-8 flex flex-col">
+              <div className="relative w-full h-[380px] sm:h-[450px] lg:h-full min-h-[380px] lg:min-h-[480px] rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-900 shadow-md hover:shadow-xl transition-all duration-300 group flex flex-col justify-end p-6 sm:p-8 lg:p-10 cursor-pointer">
+                {/* Background Image */}
+                <Image
+                  src={industrialArticles.featured.image}
+                  alt={industrialArticles.featured.title}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 65vw"
+                  className="object-cover object-center group-hover:scale-105 transition-transform duration-700 select-none"
+                  unoptimized
+                />
+
+                {/* Dark Vignette & Gradient Overlay for Maximum Readability */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 to-black/20 pointer-events-none" />
+
+                {/* Content Overlay */}
+                <div className="relative z-10 space-y-3 sm:space-y-4">
+                  {/* Category Pill with Dot */}
+                  <div className="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-white text-slate-900 text-xs font-bold shadow-md">
+                    <span className={`w-2 h-2 rounded-full ${industrialArticles.featured.categoryColor || "bg-red-600"}`} />
+                    <span>{industrialArticles.featured.category}</span>
+                  </div>
+
+                  {/* Heading */}
+                  <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-[2.2rem] font-black text-white leading-tight tracking-tight drop-shadow-sm group-hover:text-[#FFC400] transition-colors">
+                    {industrialArticles.featured.title}
+                  </h3>
+
+                  {/* Meta: Date and Read Time */}
+                  <div className="text-xs sm:text-sm text-slate-300 font-semibold flex items-center gap-2">
+                    <span>{industrialArticles.featured.date}</span>
+                    <span className="text-slate-500">•</span>
+                    <span>{industrialArticles.featured.readTime}</span>
+                  </div>
+                </div>
               </div>
-              <h2 className="text-3xl sm:text-4xl font-black text-slate-950 tracking-tight leading-tight">
-                POPULAR TURNKEY{" "}
-                <span className="text-[#FFB800]">LAB PACKAGES.</span>
-              </h2>
-              <p className="mt-2 text-sm text-slate-600 max-w-xl">
-                Ready-to-deploy laboratory bundles complete with test instruments,
-                differential probes, safety fixtures, and calibration records.
-              </p>
             </div>
 
-            <button
-              type="button"
-              onClick={() => handleOpenRfp()}
-              className="px-5 py-2.5 rounded-full bg-slate-950 hover:bg-[#FFC400] text-white hover:text-black text-xs font-black tracking-wider uppercase transition-colors shrink-0 cursor-pointer"
-            >
-              Request Custom Package RFP
-            </button>
-          </div>
+            {/* Right Column: Latest Posts */}
+            <div className="lg:col-span-5 xl:col-span-4 flex flex-col justify-between">
+              <div>
+                {/* Section Header */}
+                <h3 className="text-lg sm:text-xl font-black text-slate-950 uppercase tracking-wider mb-6 pb-2 border-b border-slate-100 flex items-center justify-between">
+                  <span>LATEST POSTS</span>
+                  <span className="w-8 h-1 bg-[#FFC400] rounded-full"></span>
+                </h3>
 
-          {/* 3 Package Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-            {turnkeyPackages.map((pkg) => (
-              <div
-                key={pkg.id}
-                className="rounded-[28px] bg-white border border-slate-200/90 shadow-md hover:shadow-2xl hover:border-[#FFC400] transition-all duration-300 flex flex-col justify-between overflow-hidden group"
-              >
-                <div>
-                  {/* Top Badge & Category */}
-                  <div className="p-6 pb-4">
-                    <div className="flex items-center justify-between gap-2 mb-3">
-                      <span className="px-2.5 py-1 rounded-full bg-amber-100 text-amber-900 text-[10px] font-black tracking-tight">
-                        {pkg.tag}
-                      </span>
-                      <span className="text-[10.5px] font-bold text-slate-400 uppercase tracking-wider">
-                        {pkg.category}
-                      </span>
-                    </div>
-
-                    <h3 className="text-lg sm:text-xl font-black text-slate-950 tracking-tight group-hover:text-amber-600 transition-colors">
-                      {pkg.title}
-                    </h3>
-
-                    <p className="mt-2 text-xs text-slate-500 leading-relaxed">
-                      {pkg.description}
-                    </p>
-                  </div>
-
-                  {/* Centered Instrument Preview Image */}
-                  <div className="relative w-full h-44 bg-gradient-to-b from-slate-50 to-white flex items-center justify-center p-4 border-y border-slate-100">
-                    <div className="relative w-full h-full">
-                      <Image
-                        src={pkg.image}
-                        alt={pkg.title}
-                        fill
-                        sizes="(max-width: 768px) 100vw, 33vw"
-                        className="object-contain filter drop-shadow-sm group-hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
-                  </div>
-
-                  {/* What is Included Checklist */}
-                  <div className="p-6 pt-5">
-                    <div className="text-[11px] font-black uppercase tracking-wider text-slate-400 mb-3">
-                      Package Hardware & Services:
-                    </div>
-                    <ul className="space-y-2">
-                      {pkg.includedGear.map((gear, i) => (
-                        <li key={i} className="flex items-start gap-2 text-xs text-slate-700">
-                          <Check className="w-3.5 h-3.5 text-emerald-600 stroke-[3] shrink-0 mt-0.5" />
-                          <span>{gear}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-
-                {/* Bottom Pricing & Action Bar */}
-                <div className="p-6 pt-4 bg-slate-50/80 border-t border-slate-100">
-                  <div className="flex items-baseline justify-between mb-3">
-                    <div>
-                      <div className="text-[9.5px] font-bold uppercase tracking-wider text-slate-400">
-                        TURNKEY ESTIMATE
+                {/* List of 4 Posts */}
+                <div className="space-y-5 sm:space-y-6">
+                  {industrialArticles.latest.map((post) => (
+                    <div
+                      key={post.id}
+                      className="group flex items-center gap-4 sm:gap-5 cursor-pointer"
+                    >
+                      {/* Left Thumbnail */}
+                      <div className="relative w-20 h-20 sm:w-24 sm:h-20 rounded-2xl overflow-hidden bg-slate-100 shrink-0 border border-slate-200/80 shadow-xs">
+                        <Image
+                          src={post.image}
+                          alt={post.title}
+                          fill
+                          sizes="120px"
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                          unoptimized
+                        />
                       </div>
-                      <div className="text-xl font-black text-slate-950">
-                        {pkg.priceRange}
+
+                      {/* Right Details */}
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-[#FFB800] transition-colors leading-snug line-clamp-2">
+                          {post.title}
+                        </h4>
+                        <div className="mt-1.5 text-[11px] sm:text-xs text-slate-500 font-semibold flex items-center gap-1.5">
+                          <span>{post.date}</span>
+                          <span className="text-slate-400">•</span>
+                          <span>{post.readTime}</span>
+                        </div>
                       </div>
                     </div>
-                    <div className="text-[10.5px] font-bold text-emerald-700 bg-emerald-100/70 px-2 py-0.5 rounded-full">
-                      {pkg.leadTime}
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => handleOpenRfp(pkg)}
-                    className="w-full py-3 rounded-xl bg-slate-950 hover:bg-[#FFC400] text-white hover:text-black text-xs font-black tracking-wider uppercase inline-flex items-center justify-center gap-2 transition-all duration-200 shadow-sm cursor-pointer"
-                  >
-                    <span>Request Package Quotation</span>
-                    <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />
-                  </button>
+                  ))}
                 </div>
               </div>
-            ))}
+            </div>
+
           </div>
         </div>
       </section>
@@ -1204,6 +1099,74 @@ export default function IndustrialHubPage() {
           </div>
         </div>
       )}
+
+      {/* ===================================================================== */}
+      {/* 6.5. SUBSCRIBE TO LOVOKIT WHOLESALE DIGEST (YELLOW & BLACK THEME)     */}
+      {/* ===================================================================== */}
+      <section className="bg-[#090B0F] text-white py-16 sm:py-20 border-t border-white/10 relative overflow-hidden">
+        {/* Subtle Ambient Radial Lighting */}
+        <div className="absolute inset-0 pointer-events-none select-none">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-[#FFC400]/[0.03] rounded-full blur-3xl" />
+        </div>
+
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+          {/* Top Mail Icon in Circle */}
+          <div className="w-12 h-12 rounded-full bg-white/[0.04] border border-white/10 flex items-center justify-center mx-auto mb-5 shadow-inner">
+            <Mail className="w-5 h-5 text-[#FFC400]" />
+          </div>
+
+          {/* Heading */}
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight uppercase">
+            SUBSCRIBE TO LOVOKIT <span className="text-[#FFC400]">WHOLESALE DIGEST</span>
+          </h2>
+
+          {/* Subtitle */}
+          <p className="text-xs sm:text-sm text-gray-400 max-w-xl mx-auto mt-3 mb-8 leading-relaxed">
+            Receive priority updates on new tool arrivals, clearance events, and OSHA compliance documents.
+          </p>
+
+          {/* Form */}
+          <form
+            onSubmit={handleDigestSubmit}
+            className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-xl mx-auto"
+          >
+            <div className="relative w-full sm:flex-1">
+              <input
+                type="email"
+                required
+                value={digestEmail}
+                onChange={(e) => setDigestEmail(e.target.value)}
+                placeholder="Enter corporate or business email..."
+                className="w-full bg-[#12151D] border border-white/15 focus:border-[#FFC400] text-xs sm:text-sm text-white placeholder-gray-500 rounded-full px-5 py-3.5 focus:outline-none transition-colors shadow-inner"
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#FFC400] hover:bg-[#e6b000] text-black font-black text-xs sm:text-sm uppercase tracking-wider px-8 py-3.5 rounded-full shadow-md hover:shadow-lg active:scale-95 transition-all cursor-pointer whitespace-nowrap"
+            >
+              <span>SUBSCRIBE</span>
+              <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+            </button>
+          </form>
+
+          {digestSubscribed && (
+            <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-950/60 border border-emerald-500/30 text-emerald-400 text-xs font-bold animate-in fade-in duration-200">
+              <Check className="w-4 h-4" />
+              <span>Thank you! You are now subscribed to the Lovokit Wholesale Digest.</span>
+            </div>
+          )}
+
+          {/* Trust Footer Notes */}
+          <div className="mt-6 text-[10px] sm:text-[11px] font-bold text-gray-500 tracking-widest uppercase">
+            <span>NO SPAM</span>
+            <span className="mx-2 text-gray-700">•</span>
+            <span>UNSUBSCRIBE ANYTIME</span>
+            <span className="mx-2 text-gray-700">•</span>
+            <span>SECURE DATA STORAGE</span>
+          </div>
+        </div>
+      </section>
 
       {/* ===================================================================== */}
       {/* 7. GLOBAL FOOTER                                                      */}

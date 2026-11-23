@@ -31,6 +31,23 @@ export default function BrandsPage() {
 
   const brands = [
     {
+      id: "lovosis",
+      name: "Lovosis",
+      brandParam: "LOVOSIS",
+      tag: "FLAGSHIP TECHNOLOGY PARTNER",
+      logo: "/images/partners/lovosis_color.webp",
+      logoWidth: 200,
+      logoHeight: 48,
+      categories: [
+        "Industrial Test Automation",
+        "Electronic Hardware Platforms",
+        "Sensors & Signal Interfaces",
+        "Smart Measurement Solutions",
+      ],
+      description:
+        "Premier industrial and electronic technology partner delivering high-reliability test automation, smart interface solutions, and precision diagnostic hardware engineered for Indian manufacturing, academic institutions, and enterprise quality control labs.",
+    },
+    {
       id: "matrix",
       name: "Matrix",
       brandParam: "MATRIX",
@@ -102,8 +119,8 @@ export default function BrandsPage() {
 
           {/* Description */}
           <p className="text-gray-300 text-sm sm:text-base lg:text-lg max-w-3xl leading-relaxed mb-8">
-            Official Authorised Distributor of <strong className="text-white">OWON</strong>,{" "}
-            <strong className="text-white">MATRIX</strong>, and premier Educational Trainer Kits
+            Official Authorised Partner &amp; Distributor of <strong className="text-white">LOVOSIS</strong>,{" "}
+            <strong className="text-white">OWON</strong>, <strong className="text-white">MATRIX</strong>, and premier Educational Trainer Kits
             in India. 100% genuine products with manufacturer factory warranty and GST tax invoices.
           </p>
 
@@ -153,7 +170,10 @@ export default function BrandsPage() {
               >
                 <div>
                   {/* Logo Display Box */}
-                  <div className="h-40 sm:h-48 w-full bg-[#FAFBFD] rounded-xl border border-gray-100 flex items-center justify-center p-6 mb-6 group-hover:bg-amber-50/20 transition-colors">
+                  <Link
+                    href={`/brands/${b.id}`}
+                    className="h-40 sm:h-48 w-full bg-[#FAFBFD] rounded-xl border border-gray-100 flex items-center justify-center p-6 mb-6 group-hover:bg-amber-50/20 transition-colors block cursor-pointer"
+                  >
                     <Image
                       src={b.logo}
                       alt={b.name}
@@ -161,7 +181,7 @@ export default function BrandsPage() {
                       height={b.logoHeight}
                       className="object-contain max-h-16 sm:max-h-20 group-hover:scale-105 transition-transform duration-300"
                     />
-                  </div>
+                  </Link>
 
                   {/* Official Distributor Tag */}
                   <div className="mb-2">
@@ -171,9 +191,11 @@ export default function BrandsPage() {
                   </div>
 
                   {/* Brand Title */}
-                  <h3 className="text-xl sm:text-2xl font-black text-slate-900 mb-3">
-                    {b.name}
-                  </h3>
+                  <Link href={`/brands/${b.id}`} className="block group-hover:text-amber-600 transition-colors">
+                    <h3 className="text-xl sm:text-2xl font-black text-slate-900 mb-3 group-hover:text-amber-600">
+                      {b.name}
+                    </h3>
+                  </Link>
 
                   {/* Brand Description */}
                   <p className="text-xs sm:text-sm text-gray-600 leading-relaxed mb-5">
@@ -183,12 +205,13 @@ export default function BrandsPage() {
                   {/* Categories Pills */}
                   <div className="flex flex-wrap gap-1.5 mb-6">
                     {b.categories.map((cat, i) => (
-                      <span
+                      <Link
                         key={i}
-                        className="bg-gray-100 text-gray-700 text-[11px] font-bold px-2.5 py-1 rounded-md"
+                        href={`/products?brand=${b.brandParam}&search=${encodeURIComponent(cat)}`}
+                        className="bg-gray-100 hover:bg-amber-100 text-gray-700 hover:text-black text-[11px] font-bold px-2.5 py-1 rounded-md transition-colors"
                       >
                         {cat}
-                      </span>
+                      </Link>
                     ))}
                   </div>
                 </div>
@@ -196,11 +219,11 @@ export default function BrandsPage() {
                 {/* Bottom Bar: EXPLORE on left, VIEW button on right */}
                 <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
                   <span className="text-xs font-black uppercase tracking-wider text-gray-500">
-                    EXPLORE
+                    EXPLORE DIVISION
                   </span>
                   <Link
-                    href={`/products?brand=${b.brandParam}`}
-                    className="inline-flex items-center gap-2 bg-[#FFC400] hover:bg-[#E6B000] text-black font-black text-xs uppercase tracking-wider px-6 py-2.5 rounded-lg shadow-xs hover:shadow-md transition-all cursor-pointer"
+                    href={`/brands/${b.id}`}
+                    className="inline-flex items-center gap-2 bg-[#E02424] hover:bg-[#C81E1E] text-white font-black text-xs uppercase tracking-wider px-6 py-2.5 rounded-lg shadow-xs hover:shadow-md transition-all cursor-pointer"
                   >
                     <span>VIEW</span>
                     <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />

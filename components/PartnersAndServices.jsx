@@ -3,6 +3,7 @@
 import React from "react";
 import { Headphones, Wrench, Gauge, ShieldCheck } from "lucide-react";
 import {
+  LovosisLogo,
   OwonLogo,
   UniTLogo,
   RigolLogo,
@@ -13,6 +14,7 @@ import {
 
 export default function PartnersAndServices() {
   const partners = [
+    { id: "lovosis", name: "LOVOSIS", component: LovosisLogo },
     { id: "owon", name: "OWON", component: OwonLogo },
     { id: "unit", name: "UNI-T", component: UniTLogo },
     { id: "rigol", name: "RIGOL", component: RigolLogo },

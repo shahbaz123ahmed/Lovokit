@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
   ChevronRight,
+  ChevronLeft,
   ArrowRight,
   CheckCircle2,
   Download,
@@ -48,14 +49,60 @@ export default function ProductDetailClient({ product, relatedProducts }) {
     router.push("/checkout");
   };
 
-  // Gallery multi-image handling
-  const gallery = product.galleryImages || [
-    product.image,
-    "/images/featured/oscilloscope-visual.png",
-    "/images/categories/oscilloscope-transparent.png",
-    "/images/featured/owon-exact-transparent.png",
-  ];
-  const [selectedImage, setSelectedImage] = useState(product.image || gallery[0]);
+  // Gallery multi-image handling (supports 1, 2, 4 or any number of images)
+  const rawGallery = (product.galleryImages && product.galleryImages.length > 0)
+    ? product.galleryImages
+    : [
+        product.image,
+        "/images/featured/oscilloscope-visual.png",
+        "/images/categories/oscilloscope-transparent.png",
+        "/images/featured/owon-exact-transparent.png",
+      ].filter(Boolean);
+
+  const gallery = rawGallery.length > 0 ? rawGallery : ["/placeholder-product.png"];
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const touchStartXRef = useRef(null);
+  const touchEndXRef = useRef(null);
+
+  // Auto-swap images dynamically every 3.5s (pauses on user hover)
+  useEffect(() => {
+    if (gallery.length <= 1 || isPaused) return;
+    const interval = setInterval(() => {
+      setActiveImageIndex((prev) => (prev + 1) % gallery.length);
+    }, 3500);
+    return () => clearInterval(interval);
+  }, [gallery.length, isPaused]);
+
+  const handlePrevImage = (e) => {
+    e?.stopPropagation?.();
+    setActiveImageIndex((prev) => (prev === 0 ? gallery.length - 1 : prev - 1));
+  };
+
+  const handleNextImage = (e) => {
+    e?.stopPropagation?.();
+    setActiveImageIndex((prev) => (prev + 1) % gallery.length);
+  };
+
+  const handleTouchStart = (e) => {
+    touchStartXRef.current = e.targetTouches[0].clientX;
+  };
+
+  const handleTouchMove = (e) => {
+    touchEndXRef.current = e.targetTouches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStartXRef.current || !touchEndXRef.current) return;
+    const distance = touchStartXRef.current - touchEndXRef.current;
+    if (distance > 40) {
+      handleNextImage();
+    } else if (distance < -40) {
+      handlePrevImage();
+    }
+    touchStartXRef.current = null;
+    touchEndXRef.current = null;
+  };
 
   // Toast notification
   const [toastMessage, setToastMessage] = useState("");
@@ -118,20 +165,22 @@ export default function ProductDetailClient({ product, relatedProducts }) {
       )}
 
       {/* 2. Breadcrumbs Bar */}
-      <div className="pt-24 sm:pt-28 pb-4 bg-[#08090C] border-b border-white/10 text-white">
+      <div className="py-3.5 bg-white border-b border-gray-200 text-slate-600">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="flex items-center gap-2 text-xs text-gray-400 overflow-x-auto no-scrollbar py-0.5">
-            <Link href="/" className="hover:text-white transition-colors flex items-center gap-1">
+          <nav className="flex items-center gap-2 text-xs text-slate-500 overflow-x-auto no-scrollbar py-0.5 font-medium">
+            <Link href="/" className="hover:text-black transition-colors flex items-center gap-1">
               Home
             </Link>
-            <ChevronRight className="w-3.5 h-3.5 text-gray-600 flex-shrink-0" />
-            <Link href="/products" className="hover:text-white transition-colors">
+            <ChevronRight className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
+            <Link href="/products" className="hover:text-black transition-colors">
               Products
             </Link>
-            <ChevronRight className="w-3.5 h-3.5 text-gray-600 flex-shrink-0" />
-            <span className="capitalize hover:text-white transition-colors">{product.categoryName}</span>
-            <ChevronRight className="w-3.5 h-3.5 text-gray-600 flex-shrink-0" />
-            <span className="text-[#FFC400] font-bold truncate">{product.model}</span>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
+            <Link href={`/products?category=${product.category}`} className="capitalize hover:text-black transition-colors">
+              {product.categoryName}
+            </Link>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
+            <span className="text-black font-extrabold truncate">{product.model}</span>
           </nav>
         </div>
       </div>
@@ -141,79 +190,119 @@ export default function ProductDetailClient({ product, relatedProducts }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
             
-            {/* Left Column: Product Visual Showcase & Multi-Angle Thumbnails */}
+            {/* Left Column: Product Visual Showcase with Auto-Swapping Slider */}
             <div className="lg:col-span-6 flex flex-col items-center">
-              {/* Main Visual Display */}
-              <div className="relative w-full aspect-[4/3] rounded-2xl bg-[#090B10] border border-gray-800 p-6 sm:p-8 flex items-center justify-center overflow-hidden shadow-xl group">
-                {/* Radial Amber Ambient Glow */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-[#FFC400]/[0.08] rounded-full blur-3xl pointer-events-none" />
+              {/* Main Visual Display (Studio Light Background + Auto-Carousel) */}
+              <div 
+                className="relative w-full aspect-[4/3] rounded-3xl bg-gradient-to-b from-[#F8FAFC] via-[#F1F5F9] to-[#E9EFF6] border border-slate-200/90 p-6 sm:p-10 flex items-center justify-center overflow-hidden shadow-sm group select-none"
+                onMouseEnter={() => setIsPaused(true)}
+                onMouseLeave={() => setIsPaused(false)}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+              >
+                {/* Radial Soft Ambient Glow */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-white/70 rounded-full blur-2xl pointer-events-none" />
 
-                <div className="relative w-full h-full">
-                  <Image
-                    src={selectedImage}
-                    alt={`${product.brand} ${product.model}`}
-                    fill
-                    priority
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                    className="object-contain filter contrast-[1.03] transition-transform duration-500 group-hover:scale-105"
-                  />
-                </div>
-
-                {/* Brand & Stock Floating Badges */}
-                <div className="absolute top-4 left-4 z-10 flex items-center gap-2">
-                  <span className="bg-[#FFC400] text-black text-[11px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md shadow-sm">
+                {/* Brand & Model Floating Badges (Top Left) */}
+                <div className="absolute top-4 left-4 z-20 flex items-center gap-2">
+                  <span className="bg-[#FFC400] text-black text-[11px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md shadow-xs">
                     {product.brand}
                   </span>
-                  <span className="bg-black/60 backdrop-blur-md border border-white/10 text-white text-[11px] font-bold px-2.5 py-1 rounded-md">
+                  <span className="bg-white/95 backdrop-blur-md border border-slate-200 text-slate-900 text-[11px] font-black px-2.5 py-1 rounded-md shadow-2xs">
                     {product.model}
                   </span>
                 </div>
 
-                {/* In Stock & Lab Ready Badge */}
-                <div className="absolute bottom-4 left-4 z-10 flex items-center gap-1.5 bg-black/70 backdrop-blur-md border border-white/10 text-emerald-400 text-[11px] font-bold px-2.5 py-1 rounded-md">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  <span>In Stock • Ready to Dispatch</span>
-                </div>
+                {/* Dynamic Image Counter Pill (Top Right) */}
+                {gallery.length > 1 && (
+                  <div className="absolute top-4 right-4 z-20 bg-white/95 backdrop-blur-md border border-slate-200 text-slate-800 text-[11px] font-extrabold px-2.5 py-1 rounded-full shadow-2xs flex items-center gap-1">
+                    <span>{activeImageIndex + 1}</span>
+                    <span className="text-slate-400 font-normal">/</span>
+                    <span>{gallery.length}</span>
+                  </div>
+                )}
 
-                {/* Calibration Standard Badge */}
-                <div className="absolute bottom-4 right-4 z-10 hidden sm:flex items-center gap-1.5 bg-black/70 backdrop-blur-md border border-white/10 text-amber-300 text-[10.5px] font-bold px-2.5 py-1 rounded-md">
-                  <FileCheck2 className="w-3.5 h-3.5 text-[#FFC400]" />
-                  <span>ISO/IEC 17025 Calibrated</span>
-                </div>
-              </div>
-
-              {/* Multi-angle Gallery Thumbnails */}
-              <div className="grid grid-cols-4 gap-2.5 sm:gap-3 w-full mt-3.5">
-                {gallery.map((imgUrl, idx) => {
-                  const isSelected = selectedImage === imgUrl;
-                  const labels = ["Front View", "Display Detail", "Isometric 3D", "Rear Ports"];
-                  return (
-                    <button
+                {/* Images Layer with Smooth Cross-Fade Animation */}
+                <div className="relative w-full h-full flex items-center justify-center">
+                  {gallery.map((imgUrl, idx) => (
+                    <div
                       key={idx}
-                      type="button"
-                      onClick={() => setSelectedImage(imgUrl)}
-                      aria-label={`Select ${labels[idx] || "view"}`}
-                      className={`relative aspect-[4/3] rounded-xl overflow-hidden bg-slate-900 border-2 transition-all p-2 flex flex-col items-center justify-center ${
-                        isSelected
-                          ? "border-[#FFC400] ring-2 ring-[#FFC400]/40 shadow-md"
-                          : "border-slate-200 hover:border-slate-400 opacity-80 hover:opacity-100"
+                      className={`absolute inset-0 transition-all duration-700 ease-out flex items-center justify-center ${
+                        idx === activeImageIndex
+                          ? "opacity-100 scale-100 pointer-events-auto"
+                          : "opacity-0 scale-95 pointer-events-none"
                       }`}
                     >
-                      <div className="relative w-full h-full">
-                        <Image
-                          src={imgUrl}
-                          alt={`${product.model} angle ${idx + 1}`}
-                          fill
-                          sizes="15vw"
-                          className="object-contain"
-                        />
-                      </div>
-                      <span className="absolute bottom-1 text-[8px] sm:text-[9px] font-bold text-white/90 bg-black/70 px-1 rounded truncate max-w-[90%]">
-                        {labels[idx] || `View ${idx + 1}`}
-                      </span>
-                    </button>
-                  );
-                })}
+                      <Image
+                        src={imgUrl}
+                        alt={`${product.brand} ${product.model} - view ${idx + 1}`}
+                        fill
+                        priority={idx === 0}
+                        sizes="(max-width: 1024px) 100vw, 50vw"
+                        className="object-contain transition-transform duration-500 group-hover:scale-105"
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                {/* Left Navigation Chevron */}
+                {gallery.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={handlePrevImage}
+                    aria-label="Previous product image"
+                    className="absolute left-3.5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/90 hover:bg-[#FFC400] text-slate-800 hover:text-black border border-slate-200/90 shadow-md flex items-center justify-center transition-all duration-200 opacity-90 sm:opacity-0 group-hover:opacity-100 hover:scale-110 active:scale-95 cursor-pointer"
+                  >
+                    <ChevronLeft className="w-5 h-5 -ml-0.5" />
+                  </button>
+                )}
+
+                {/* Right Navigation Chevron */}
+                {gallery.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={handleNextImage}
+                    aria-label="Next product image"
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/90 hover:bg-[#FFC400] text-slate-800 hover:text-black border border-slate-200/90 shadow-md flex items-center justify-center transition-all duration-200 opacity-90 sm:opacity-0 group-hover:opacity-100 hover:scale-110 active:scale-95 cursor-pointer"
+                  >
+                    <ChevronRight className="w-5 h-5 -mr-0.5" />
+                  </button>
+                )}
+
+                {/* Bottom Center Dynamic Pill Indicators */}
+                {gallery.length > 1 && (
+                  <div className="absolute bottom-3.5 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/90 backdrop-blur-md border border-slate-200/90 shadow-xs">
+                    {gallery.map((_, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveImageIndex(idx);
+                        }}
+                        aria-label={`Go to slide ${idx + 1}`}
+                        className={`transition-all duration-300 rounded-full cursor-pointer ${
+                          idx === activeImageIndex
+                            ? "w-6 h-2 bg-[#FFC400]"
+                            : "w-2 h-2 bg-slate-300 hover:bg-slate-400"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                )}
+
+                {/* In Stock & Lab Ready Badge (Bottom Left) */}
+                <div className="absolute bottom-3.5 left-4 z-10 hidden sm:flex items-center gap-1.5 bg-white/95 backdrop-blur-md border border-emerald-200 text-emerald-700 text-[10px] font-bold px-2.5 py-1 rounded-md shadow-2xs">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>Ready to Dispatch</span>
+                </div>
+
+                {/* Calibration Standard Badge (Bottom Right) */}
+                <div className="absolute bottom-3.5 right-4 z-10 hidden sm:flex items-center gap-1.5 bg-white/95 backdrop-blur-md border border-amber-200 text-amber-900 text-[10px] font-bold px-2.5 py-1 rounded-md shadow-2xs">
+                  <FileCheck2 className="w-3.5 h-3.5 text-[#B38600]" />
+                  <span>ISO/IEC Calibrated</span>
+                </div>
               </div>
 
               {/* Trust Badges Bar */}
@@ -293,14 +382,14 @@ export default function ProductDetailClient({ product, relatedProducts }) {
                 </p>
 
                 {/* B2B Industrial Pricing Box */}
-                <div className="mt-5 p-4 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-950 text-white border border-slate-800 shadow-md">
+                <div className="mt-5 p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-amber-50/50 via-white to-amber-50/30 text-slate-900 border border-amber-200/90 shadow-xs">
                   <div className="flex items-baseline justify-between gap-2 flex-wrap">
                     <div>
-                      <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#FFC400] block mb-0.5">
+                      <span className="text-[10.5px] font-black uppercase tracking-wider text-amber-800 block mb-0.5">
                         INSTITUTIONAL &amp; B2B RATE
                       </span>
                       <div className="flex items-baseline gap-2.5">
-                        <span className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                        <span className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
                           {product.price || "₹1,25,000"}
                         </span>
                         {product.originalPrice && (
@@ -308,29 +397,29 @@ export default function ProductDetailClient({ product, relatedProducts }) {
                             {product.originalPrice}
                           </span>
                         )}
-                        <span className="text-[11px] font-bold text-emerald-400 bg-emerald-950/80 border border-emerald-500/30 px-2 py-0.5 rounded">
+                        <span className="text-[11px] font-bold text-emerald-700 bg-emerald-100 border border-emerald-300/60 px-2 py-0.5 rounded">
                           Save 15%
                         </span>
                       </div>
                     </div>
 
                     <div className="text-right">
-                      <span className="text-[11px] text-gray-300 font-medium block">
+                      <span className="text-[11px] text-slate-700 font-bold block">
                         MOQ: 1 Unit
                       </span>
-                      <span className="text-[10px] text-gray-400 block">
+                      <span className="text-[10px] text-slate-500 block">
                         Bulk volume discounts available
                       </span>
                     </div>
                   </div>
 
                   {/* GST Invoice Assurance */}
-                  <div className="mt-3 pt-3 border-t border-white/10 flex items-center justify-between text-[11px] text-gray-300">
-                    <span className="flex items-center gap-1.5">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-[#FFC400]" />
+                  <div className="mt-3 pt-3 border-t border-amber-200/60 flex items-center justify-between text-[11px] text-slate-600">
+                    <span className="flex items-center gap-1.5 font-medium">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-amber-600" />
                       <span>Excl. 18% GST • Input Tax Credit (ITC) Invoice Provided</span>
                     </span>
-                    <span className="text-[#FFC400] font-bold text-[10.5px]">
+                    <span className="text-amber-800 font-bold text-[10.5px] bg-amber-100/70 border border-amber-200 px-2 py-0.5 rounded">
                       GeM Portal Available
                     </span>
                   </div>

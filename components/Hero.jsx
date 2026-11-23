@@ -28,7 +28,6 @@ const slides = [
     description:
       "Discover high-performance testing, measurement and electronic instruments designed for professionals, research labs and industrial applications.",
     primaryBtn: { text: "Explore Products", href: "/products" },
-    secondaryBtn: { text: "Request a Quote", href: "/products" },
     trustBadges: [
       { icon: ShieldCheck, label: "Genuine Products" },
       { icon: Truck, label: "Fast Delivery" },
@@ -48,7 +47,6 @@ const slides = [
     description:
       "Explore professional-grade testing instruments, measurement equipment and precision tools designed to deliver dependable results across laboratories, industries and technical applications.",
     primaryBtn: { text: "Explore Collection", href: "/products" },
-    secondaryBtn: { text: "Request a Quote", href: "/products" },
     trustBadges: [
       { icon: ShieldCheck, label: "Genuine Products" },
       { icon: Truck, label: "Fast Delivery" },
@@ -67,8 +65,8 @@ const slides = [
     subheadingTag: null,
     description:
       "Need product recommendations, bulk quotes or technical support? Our team is here to help you find the right solution.",
-    primaryBtn: { text: "Get in Touch", href: "#footer" },
-    secondaryBtn: { text: "Request a Quote", href: "/products" },
+    primaryBtn: { text: "Get in Touch", href: "/contact" },
+
     trustBadges: [
       { icon: Headphones, label: "Expert Support" },
       { icon: FileText, label: "Quick Quote" },
@@ -124,16 +122,15 @@ export default function Hero() {
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
-      className="relative w-full overflow-hidden bg-white select-none group border-b border-slate-100 sm:flex sm:items-center sm:min-h-[calc(100vh-142px)]"
+      className="relative w-full overflow-hidden bg-white group border-b border-slate-100 sm:flex sm:items-center sm:min-h-[calc(100vh-142px)]"
     >
       {/* 1. Desktop Full-Width Studio Background Banner (Hidden on Mobile) */}
       <div className="hidden sm:block absolute inset-0 w-full h-full pointer-events-none select-none">
         {slides.map((slide, idx) => (
           <div
             key={slide.id}
-            className={`absolute inset-0 w-full h-full transition-opacity duration-500 ease-in-out ${
-              idx === currentSlide ? "opacity-100 z-0" : "opacity-0 -z-10"
-            }`}
+            className={`absolute inset-0 w-full h-full transition-opacity duration-500 ease-in-out ${idx === currentSlide ? "opacity-100 z-0" : "opacity-0 -z-10"
+              }`}
           >
             <Image
               src={slide.bgImage}
@@ -150,13 +147,13 @@ export default function Hero() {
       </div>
 
       {/* 2. Main Content Container (Text, Heading, Buttons & Trust Badges on Top) */}
-      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-12 lg:px-16 pt-5 pb-2 sm:py-14 lg:py-16 relative z-10">
+      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-12 lg:px-16 pt-5 pb-2 sm:py-14 lg:py-16 relative z-10 select-text">
         {slides.map((slide, idx) => {
           if (idx !== currentSlide) return null;
           return (
             <div
               key={`slide-content-${slide.id}`}
-              className="max-w-md sm:max-w-xl lg:max-w-2xl flex flex-col justify-center items-start text-left space-y-3 sm:space-y-4 lg:space-y-5"
+              className="max-w-md sm:max-w-xl lg:max-w-2xl flex flex-col justify-center items-start text-left space-y-3 sm:space-y-4 lg:space-y-5 select-text"
             >
               {/* Top Yellow Pill Badge - Flush Left */}
               <div className="flex items-center animate-hero-badge">
@@ -190,23 +187,14 @@ export default function Hero() {
                 {slide.description}
               </p>
 
-              {/* Call to Action Buttons - Flush Left, Natural Pill Widths */}
+              {/* Call to Action Button - Flush Left, Natural Pill Width */}
               <div className="flex flex-wrap items-center justify-start gap-2.5 sm:gap-4 pt-1 sm:pt-2 animate-hero-actions">
-                {/* Button 1: Primary Yellow Pill */}
                 <Link
                   href={slide.primaryBtn.href}
-                  className="inline-flex items-center justify-center gap-1.5 sm:gap-2 bg-[#FFC400] hover:bg-[#e6b000] text-black font-extrabold text-xs sm:text-sm tracking-wide px-5 sm:px-7 py-2.5 sm:py-3.5 rounded-full transition-all duration-200 shadow-md hover:shadow-lg active:scale-95 text-center shrink-0 cursor-pointer"
+                  className="inline-flex items-center justify-center gap-1.5 sm:gap-2 bg-[#FFC400] hover:bg-[#e6b000] text-black font-extrabold text-xs sm:text-sm tracking-wide px-5 sm:px-7 py-2.5 sm:py-3.5 rounded-full transition-all duration-200 shadow-md hover:shadow-lg active:scale-95 text-center shrink-0 cursor-pointer select-none"
                 >
                   <span>{slide.primaryBtn.text}</span>
                   <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]" />
-                </Link>
-
-                {/* Button 2: Request a Quote (Clean White Pill with dark outline) */}
-                <Link
-                  href={slide.secondaryBtn.href}
-                  className="inline-flex items-center justify-center gap-1.5 sm:gap-2 bg-white hover:bg-slate-50 text-slate-950 font-extrabold text-xs sm:text-sm tracking-wide px-5 sm:px-7 py-2.5 sm:py-3.5 rounded-full border border-slate-900 shadow-xs transition-all duration-200 active:scale-95 text-center shrink-0 cursor-pointer"
-                >
-                  <span>{slide.secondaryBtn.text}</span>
                 </Link>
               </div>
 
@@ -236,9 +224,8 @@ export default function Hero() {
           {slides.map((slide, idx) => (
             <div
               key={`mobile-img-${slide.id}`}
-              className={`absolute inset-0 w-full h-full transition-opacity duration-500 ease-in-out ${
-                idx === currentSlide ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"
-              }`}
+              className={`absolute inset-0 w-full h-full transition-opacity duration-500 ease-in-out ${idx === currentSlide ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"
+                }`}
             >
               <Image
                 src={slide.mobileImage || slide.bgImage}
@@ -279,11 +266,10 @@ export default function Hero() {
             key={idx}
             onClick={() => setCurrentSlide(idx)}
             aria-label={`Go to slide ${idx + 1}`}
-            className={`transition-all duration-300 cursor-pointer ${
-              idx === currentSlide
-                ? "w-6 h-2 rounded-full bg-[#FFC400] shadow-xs"
-                : "w-2 h-2 rounded-full bg-slate-300 hover:bg-slate-400"
-            }`}
+            className={`transition-all duration-300 cursor-pointer ${idx === currentSlide
+              ? "w-6 h-2 rounded-full bg-[#FFC400] shadow-xs"
+              : "w-2 h-2 rounded-full bg-slate-300 hover:bg-slate-400"
+              }`}
           />
         ))}
       </div>
@@ -304,11 +290,10 @@ export default function Hero() {
               key={idx}
               onClick={() => setCurrentSlide(idx)}
               aria-label={`Go to slide ${idx + 1}`}
-              className={`transition-all duration-300 cursor-pointer ${
-                idx === currentSlide
-                  ? "w-6 h-2 rounded-full bg-[#FFC400] shadow-xs"
-                  : "w-2 h-2 rounded-full bg-slate-300 hover:bg-slate-400"
-              }`}
+              className={`transition-all duration-300 cursor-pointer ${idx === currentSlide
+                ? "w-6 h-2 rounded-full bg-[#FFC400] shadow-xs"
+                : "w-2 h-2 rounded-full bg-slate-300 hover:bg-slate-400"
+                }`}
             />
           ))}
         </div>

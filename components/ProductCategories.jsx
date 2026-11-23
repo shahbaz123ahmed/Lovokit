@@ -184,9 +184,9 @@ export default function ProductCategories() {
             </div>
           </div>
 
-          {/* Right Column: Five Product Category Cards Arranged Horizontally */}
+          {/* Right Column (Desktop xl:): Five Product Category Cards in 5 Columns */}
           <div
-            className={`xl:col-span-8 grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-3.5 items-stretch ${
+            className={`hidden xl:grid xl:col-span-8 grid-cols-5 gap-3.5 items-stretch ${
               isVisible ? "animate-about-cards-appear" : "opacity-0"
             }`}
           >
@@ -198,6 +198,48 @@ export default function ProductCategories() {
                 onSelect={() => setActiveId(category.id)}
               />
             ))}
+          </div>
+
+          {/* Right Column (Mobile & Tablet < xl): Auto-Running Infinite Marquee Ticker */}
+          <div
+            className={`xl:hidden w-full overflow-hidden py-2 relative ${
+              isVisible ? "animate-about-cards-appear" : "opacity-0"
+            }`}
+          >
+            {/* Soft Edge Gradient Masks */}
+            <div className="absolute top-0 bottom-0 left-0 w-8 sm:w-12 bg-gradient-to-r from-[#F3F4F6] to-transparent z-10 pointer-events-none" />
+            <div className="absolute top-0 bottom-0 right-0 w-8 sm:w-12 bg-gradient-to-l from-[#F3F4F6] to-transparent z-10 pointer-events-none" />
+
+            {/* Seamless Infinite Running Ticker (Continuous Glide, Pauses on Touch/Hover) */}
+            <div className="animate-category-marquee flex items-center gap-3.5 py-1">
+              {[...categories, ...categories, ...categories].map((category, idx) => (
+                <div
+                  key={`${category.id}-${idx}`}
+                  className="w-[210px] sm:w-[230px] flex-shrink-0"
+                >
+                  <ProductCategoryCard
+                    category={category}
+                    isActive={activeId === category.id}
+                    onSelect={() => setActiveId(category.id)}
+                  />
+                </div>
+              ))}
+            </div>
+
+            {/* Mobile Helper Indicator Strip */}
+            <div className="flex items-center justify-between px-2 mt-3 pt-2 border-t border-slate-200/60 text-[11px] font-bold text-slate-500">
+              <span className="flex items-center gap-1.5 text-slate-700">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#FFB800] animate-pulse" />
+                <span>Auto-running categories • Tap to browse</span>
+              </span>
+              <Link
+                href="/products"
+                className="text-amber-600 hover:text-amber-700 font-extrabold uppercase tracking-wider flex items-center gap-1"
+              >
+                <span>All Categories</span>
+                <ArrowRight className="w-3 h-3 stroke-[2.5]" />
+              </Link>
+            </div>
           </div>
         </div>
       </div>

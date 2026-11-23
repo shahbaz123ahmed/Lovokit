@@ -13,6 +13,7 @@ import {
   CheckCircle2,
   Sparkles,
   Heart,
+  Eye,
 } from "lucide-react";
 import { useShop } from "@/context/ShopContext";
 
@@ -645,6 +646,16 @@ export default function TrendingBestSellers() {
                       <span>In Stock</span>
                     </span>
 
+                    {/* Quick Eye Button to View Details */}
+                    <Link
+                      href={`/products/${product.id}`}
+                      aria-label={`View ${product.model} detailed page`}
+                      className="p-1 rounded-full text-slate-400 hover:text-black hover:bg-slate-100 transition-colors cursor-pointer"
+                      title="View Details Page"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                    </Link>
+
                     <button
                       type="button"
                       onClick={() => toggleWishlist(product)}
@@ -666,7 +677,7 @@ export default function TrendingBestSellers() {
                 {/* 2. Product Image Showcase (Clean, high-res centered visual) */}
                 <Link
                   href={`/products/${product.id}`}
-                  className="relative w-full h-44 sm:h-36 lg:h-40 flex items-center justify-center pt-2 pb-1 overflow-hidden block"
+                  className="relative w-full h-44 sm:h-36 lg:h-40 flex items-center justify-center pt-2 pb-1 overflow-hidden block cursor-pointer"
                 >
                   <div className="relative w-full h-full">
                     <Image
@@ -694,9 +705,10 @@ export default function TrendingBestSellers() {
                   <div className="flex items-center justify-between gap-1 mt-1">
                     <Link
                       href={`/products/${product.id}`}
-                      className="text-[10px] sm:text-[10.5px] font-black tracking-wider uppercase text-amber-600 hover:text-amber-700"
+                      className="inline-flex items-center gap-1 text-[10px] sm:text-[10.5px] font-black tracking-wider uppercase text-amber-600 hover:text-amber-700"
                     >
-                      VIEW DETAILS
+                      <Eye className="w-3 h-3 stroke-[2.5]" />
+                      <span>VIEW DETAILS</span>
                     </Link>
 
                     {/* 5-Star Rating */}
@@ -737,14 +749,14 @@ export default function TrendingBestSellers() {
                   )}
                 </div>
 
-                {/* Bottom Action Bar: Compare & Buy Button */}
+                {/* Bottom Action Bar: Compare, View Details & Buy Button */}
                 <div className="flex items-center gap-1.5 pt-1">
                   {/* Compare action button */}
                   <button
                     type="button"
                     onClick={() => handleCompareClick(product.id)}
                     aria-label={`Compare ${product.model}`}
-                    className={`flex-1 py-1.5 px-2 rounded-lg border text-[10px] sm:text-[10.5px] font-bold inline-flex items-center justify-center gap-1 transition-all duration-150 cursor-pointer ${
+                    className={`py-1.5 px-2 rounded-lg border text-[10px] sm:text-[10.5px] font-bold inline-flex items-center justify-center gap-1 transition-all duration-150 cursor-pointer ${
                       copiedId === product.id
                         ? "bg-emerald-50 border-emerald-300 text-emerald-700"
                         : "bg-slate-50 hover:bg-slate-100 border-slate-200/90 text-slate-700"
@@ -753,15 +765,26 @@ export default function TrendingBestSellers() {
                     {copiedId === product.id ? (
                       <>
                         <Check className="w-3 h-3 text-emerald-600 stroke-[2.5]" />
-                        <span>Added</span>
+                        <span className="hidden sm:inline">Added</span>
                       </>
                     ) : (
                       <>
                         <ArrowLeftRight className="w-3 h-3 text-slate-500 stroke-[2]" />
-                        <span>Compare</span>
+                        <span className="hidden sm:inline">Compare</span>
                       </>
                     )}
                   </button>
+
+                  {/* View Details Button with Eye Icon */}
+                  <Link
+                    href={`/products/${product.id}`}
+                    aria-label={`View ${product.model} detailed page`}
+                    className="flex-1 py-1.5 px-2 rounded-lg border border-slate-200 hover:border-black hover:bg-slate-50 text-slate-800 hover:text-black text-[10.5px] sm:text-[11px] font-black tracking-wide uppercase inline-flex items-center justify-center gap-1 transition-all duration-200 shadow-2xs hover:shadow-xs cursor-pointer"
+                    title="Open Product Details Page"
+                  >
+                    <Eye className="w-3.5 h-3.5 stroke-[2.5]" />
+                    <span>VIEW</span>
+                  </Link>
 
                   {/* Buy Button (Adds to cart & opens Cart Drawer) */}
                   <button

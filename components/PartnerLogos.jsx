@@ -1,4 +1,20 @@
 import React from "react";
+import Image from "next/image";
+
+export function LovosisLogo({ className = "h-6 sm:h-7" }) {
+  return (
+    <div className={`relative ${className} w-28 sm:w-32 flex items-center justify-center`}>
+      <Image
+        src="/images/partners/lovosis_color.webp"
+        alt="LOVOSIS"
+        fill
+        sizes="140px"
+        className="object-contain filter grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
+        unoptimized
+      />
+    </div>
+  );
+}
 
 export function OwonLogo({ className = "h-6 sm:h-7" }) {
   return (

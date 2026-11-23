@@ -54,8 +54,8 @@ export default function CtaBanner({
       <div className="absolute inset-0 w-full h-full pointer-events-none select-none z-0">
         <div
           className={`absolute inset-0 w-full h-full transition-all duration-1000 ease-out ${isVisible
-              ? "opacity-100 scale-100"
-              : "opacity-0 scale-105"
+            ? "opacity-100 scale-100"
+            : "opacity-0 scale-105"
             }`}
         >
           <Image
@@ -126,20 +126,20 @@ export default function CtaBanner({
           >
             {/* Primary CTA Button */}
             <Link
-              href="#quote"
+              href="/products"
               className="inline-flex items-center justify-center gap-2.5 bg-[#FFC400] hover:bg-[#e6b000] text-black font-extrabold text-xs sm:text-sm tracking-wide uppercase px-6 sm:px-7 py-3.5 rounded-full transition-all duration-200 shadow-[0_0_25px_rgba(255,196,0,0.3)] hover:shadow-[0_0_35px_rgba(255,196,0,0.5)] hover:scale-[1.02] active:scale-[0.98]"
             >
-              <span>Request a Quote</span>
+              <span>Explore Products</span>
               <ArrowRight className="w-4 h-4 stroke-[2.5]" />
             </Link>
 
             {/* Secondary CTA Button */}
             <Link
-              href="#contact"
+              href="/contact"
               className="inline-flex items-center justify-center gap-2.5 bg-[#12151D]/90 hover:bg-[#1A1F2C] border border-white/20 hover:border-white/35 text-white font-medium text-xs sm:text-sm px-5 sm:px-6 py-3.5 rounded-full transition-all duration-200 backdrop-blur-md shadow-lg group active:scale-[0.98]"
             >
               <PhoneCall className="w-3.5 h-3.5 text-gray-300 group-hover:text-[#FFC400] transition-colors" />
-              <span>Contact Sales</span>
+              <span>Contact Us</span>
             </Link>
           </div>
         </div>

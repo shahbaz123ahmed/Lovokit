@@ -23,6 +23,7 @@ import {
   Award,
   ExternalLink,
   Check,
+  Star,
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -50,8 +51,6 @@ const contactFaqs = [
 ];
 
 export default function ContactPage() {
-  // Form Type State
-  const [inquiryType, setInquiryType] = useState("b2b-quote");
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [expandedFaq, setExpandedFaq] = useState(0);
 
@@ -60,10 +59,13 @@ export default function ContactPage() {
     name: "",
     email: "",
     phone: "",
-    company: "",
-    sector: "Automotive & EV",
-    requirement: "",
+    subject: "",
+    inquiry: "",
   });
+
+  // Wholesale Digest Newsletter State
+  const [digestEmail, setDigestEmail] = useState("");
+  const [digestSubscribed, setDigestSubscribed] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -76,10 +78,14 @@ export default function ContactPage() {
       name: "",
       email: "",
       phone: "",
-      company: "",
-      sector: "Automotive & EV",
-      requirement: "",
+      subject: "",
+      inquiry: "",
     });
+  };
+
+  const handleDigestSubscribe = (e) => {
+    e.preventDefault();
+    setDigestSubscribed(true);
   };
 
   return (
@@ -90,11 +96,11 @@ export default function ContactPage() {
       {/* ===================================================================== */}
       {/* 2. COMPACT CONTACT HERO BANNER (MATCHING HOMEPAGE DESIGN)             */}
       {/* ===================================================================== */}
-      <section className="relative w-full overflow-hidden bg-white flex items-center border-b border-slate-100 min-h-[380px] sm:min-h-[420px] lg:min-h-[450px] py-8 sm:py-10 lg:py-12 select-none group">
+      <section className="relative w-full overflow-hidden bg-white flex items-center border-b border-slate-100 min-h-[380px] sm:min-h-[420px] lg:min-h-[450px] py-8 sm:py-10 lg:py-12 group">
         {/* Full-Width Background Studio Banner */}
         <div className="absolute inset-0 w-full h-full pointer-events-none select-none z-0">
           <Image
-            src="/images/3slide.webp"
+            src="/images/contact.png"
             alt="LOVOKIT Contact Desk - Have a Requirement? Let's Talk Solutions."
             fill
             priority={true}
@@ -106,8 +112,8 @@ export default function ContactPage() {
         </div>
 
         {/* Hero Content Container */}
-        <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 relative z-10">
-          <div className="max-w-md sm:max-w-xl lg:max-w-2xl flex flex-col justify-center space-y-3 sm:space-y-3.5 lg:space-y-4 text-left">
+        <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 relative z-10 select-text">
+          <div className="max-w-md sm:max-w-xl lg:max-w-2xl flex flex-col justify-center space-y-3 sm:space-y-3.5 lg:space-y-4 text-left select-text">
             {/* Top Yellow Pill Badge */}
             <div className="flex items-center animate-hero-badge">
               <div className="inline-flex items-center gap-2 bg-[#FFC400] text-black text-[11px] font-black tracking-wider uppercase px-3.5 py-1.5 rounded-full shadow-xs">
@@ -123,8 +129,8 @@ export default function ContactPage() {
               <span className="block sm:whitespace-nowrap animate-hero-heading-1">
                 Have a Requirement?
               </span>
-              <span className="block sm:whitespace-nowrap mt-1.5 sm:mt-2 text-[#FFB800] drop-shadow-xs animate-hero-heading-2">
-                Let’s Talk Solutions.
+              <span className="block sm:whitespace-nowrap mt-1 sm:mt-1.5 text-[#FFB800] drop-shadow-xs animate-hero-heading-2">
+                Let&apos;s Talk Solutions.
               </span>
             </h1>
 
@@ -135,23 +141,7 @@ export default function ContactPage() {
               across India.
             </p>
 
-            {/* Quick Action Hotline Strip */}
-            <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-1 sm:pt-2 animate-hero-actions">
-              <a
-                href="tel:+919747745544"
-                className="inline-flex items-center justify-center gap-2 bg-[#FFC400] hover:bg-[#e6b000] text-black font-extrabold text-xs sm:text-sm tracking-wide px-6 sm:px-7 py-3 rounded-full transition-all duration-200 shadow-md hover:shadow-lg active:scale-95 hover:-translate-y-0.5 cursor-pointer"
-              >
-                <Phone className="w-4 h-4 stroke-[2.5]" />
-                <span>Call Sales: +91 97477 45544</span>
-              </a>
 
-              <a
-                href="#inquiry-form"
-                className="inline-flex items-center justify-center gap-2 bg-white hover:bg-slate-50 text-slate-950 font-extrabold text-xs sm:text-sm tracking-wide px-6 sm:px-7 py-3 rounded-full border border-slate-900 shadow-xs transition-all duration-200 active:scale-95 hover:-translate-y-0.5 cursor-pointer"
-              >
-                <span>Submit RFP Inquiry ↓</span>
-              </a>
-            </div>
 
             {/* Trust Badges Strip below buttons */}
             <div className="flex flex-wrap items-center gap-3 sm:gap-5 pt-1.5 sm:pt-2.5 text-xs font-bold text-slate-800 animate-hero-trust">
@@ -184,27 +174,27 @@ export default function ContactPage() {
       <section id="inquiry-form" className="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
           {/* ================================================================= */}
-          {/* LEFT COLUMN: Corporate Channels & Office Directory (5 Cols)      */}
+          {/* LEFT COLUMN: Direct Contact Channels (5 Cols)                    */}
           {/* ================================================================= */}
-          <div className="lg:col-span-5 flex flex-col space-y-6">
+          <div className="lg:col-span-5 space-y-6">
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 text-slate-800 text-[11px] font-black tracking-wider uppercase mb-3">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 text-slate-800 text-[11px] font-black tracking-wider uppercase mb-2">
                 <Building2 className="w-3.5 h-3.5 text-slate-900" />
-                <span>DIRECT CORPORATE DESK</span>
+                <span>ENTERPRISE HEADQUARTERS</span>
               </div>
-              <h2 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight leading-tight">
-                REACH OUR SPECIALIZED{" "}
-                <span className="text-[#FFB800]">DEPARTMENTS.</span>
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
+                Get In Touch With Our Application Team
               </h2>
-              <p className="mt-2 text-xs sm:text-sm text-slate-600 leading-relaxed">
-                Connect directly with the appropriate division for priority
-                pricing, tender drafting, calibration verification, or on-site trials.
+              <p className="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
+                Reach out for direct wholesale supply, OEM distribution
+                agreements, institutional tenders, or NABL calibration
+                scheduling.
               </p>
             </div>
 
-            {/* Channel Cards */}
+            {/* Direct Department Channels */}
             <div className="space-y-4">
-              {/* Channel 1: Sales & Tenders */}
+              {/* Channel 1: Commercial Sales */}
               <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-xs hover:border-[#FFC400] transition-colors">
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 rounded-xl bg-[#FFC400] text-black flex items-center justify-center shrink-0 shadow-xs">
@@ -212,7 +202,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <div className="text-[10px] font-black uppercase tracking-wider text-slate-400">
-                      B2B PROCUREMENT &amp; TENDERS
+                      COMMERCIAL &amp; B2B PROCUREMENT
                     </div>
                     <div className="text-sm font-black text-slate-950 mt-0.5">
                       National Sales Division
@@ -230,10 +220,10 @@ export default function ContactPage() {
                       <div>
                         Email:{" "}
                         <a
-                          href="mailto:sales@lovokit.com"
+                          href="mailto:sales@lovosis.in"
                           className="font-bold text-slate-900 hover:text-amber-600"
                         >
-                          sales@lovokit.com
+                          sales@lovosis.in
                         </a>
                       </div>
                     </div>
@@ -278,7 +268,7 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              {/* Channel 3: Pune Distribution Depot */}
+              {/* Channel 3: Registered Corporate Office */}
               <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-xs hover:border-[#FFC400] transition-colors">
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-900 flex items-center justify-center shrink-0 shadow-xs">
@@ -286,14 +276,13 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <div className="text-[10px] font-black uppercase tracking-wider text-slate-400">
-                      CENTRAL LOGISTICS HUB
+                      REGISTERED CORPORATE HEADQUARTERS
                     </div>
                     <div className="text-sm font-black text-slate-950 mt-0.5">
-                      Pune Technology &amp; Calibration Depot
+                      Lovokit / Lovosis Technology Pvt. Ltd.
                     </div>
                     <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-                      Plot 48, Electronics Manufacturing Zone, Bhosari MIDC, Pune,
-                      Maharashtra 411026, India.
+                      3rd Floor, Swathi building, 4-72/2, Main Road, opp. singapura Garden, Lakshmipura, Abbigere, Bengaluru, Karnataka 560090
                     </p>
                   </div>
                 </div>
@@ -303,9 +292,9 @@ export default function ContactPage() {
             {/* Operating Hours Card with Live Indicator */}
             <div className="p-4 rounded-2xl bg-gradient-to-r from-slate-900 to-[#0F141F] text-white flex items-center justify-between gap-3 shadow-md">
               <div className="flex items-center gap-3">
-                <span className="w-3 h-3 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                <span className="w-3.5 h-3.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
                 <div>
-                  <div className="text-xs font-black">Depot Desk Active Now</div>
+                  <div className="text-xs font-black">Headquarters Desk Active Now</div>
                   <div className="text-[11px] text-slate-400">
                     Mon – Sat: 9:00 AM – 7:30 PM IST
                   </div>
@@ -323,82 +312,48 @@ export default function ContactPage() {
           </div>
 
           {/* ================================================================= */}
-          {/* RIGHT COLUMN: Interactive High-End RFP & Inquiry Form (7 Cols)   */}
+          {/* RIGHT COLUMN: Inquiry Form Box                                    */}
           {/* ================================================================= */}
           <div className="lg:col-span-7">
-            <div className="rounded-[32px] bg-white border border-slate-200 shadow-xl p-6 sm:p-10 relative overflow-hidden">
+            <div className="rounded-2xl bg-white border border-slate-200/90 shadow-sm p-6 sm:p-8 lg:p-10 relative">
               {/* Form Top Header */}
-              <div className="border-b border-slate-100 pb-6 mb-6">
-                <div className="text-[10px] font-black uppercase tracking-wider text-amber-600 block mb-1">
-                  OFFICIAL PROCUREMENT FORM
-                </div>
-                <h3 className="text-2xl font-black text-slate-950 tracking-tight">
-                  Submit Instrument Quotation Request
+              <div className="border-b border-slate-200/80 pb-4 mb-6">
+                <h3 className="text-xs sm:text-sm font-black tracking-wider uppercase text-slate-900">
+                  INQUIRE BULK PRICING / CUSTOM QUOTE
                 </h3>
-                <p className="text-xs text-slate-500 mt-1">
-                  Fill in your lab or project parameters. We will prepare an
-                  official GST quotation with datasheet attachments.
-                </p>
-
-                {/* Inquiry Type Selector Pills */}
-                <div className="flex flex-wrap gap-2 mt-4">
-                  {[
-                    { id: "b2b-quote", label: "B2B & Bulk Quote" },
-                    { id: "lab-setup", label: "Turnkey Lab Setup" },
-                    { id: "calibration", label: "Calibration / Service" },
-                    { id: "general", label: "Technical Inquiry" },
-                  ].map((t) => (
-                    <button
-                      key={t.id}
-                      type="button"
-                      onClick={() => setInquiryType(t.id)}
-                      className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                        inquiryType === t.id
-                          ? "bg-slate-950 text-white shadow-xs"
-                          : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                      }`}
-                    >
-                      {t.label}
-                    </button>
-                  ))}
-                </div>
               </div>
 
               {formSubmitted ? (
                 /* Interactive Success Card */
                 <div className="py-10 text-center animate-in fade-in zoom-in-95 duration-200">
-                  <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-4 shadow-xs">
-                    <CheckCircle2 className="w-8 h-8 stroke-[2.5]" />
+                  <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-4 shadow-xs">
+                    <CheckCircle2 className="w-7 h-7 stroke-[2.5]" />
                   </div>
-                  <h4 className="text-2xl font-black text-slate-950">
+                  <h4 className="text-xl font-black text-slate-950">
                     Inquiry Received Successfully!
                   </h4>
                   <p className="text-xs sm:text-sm text-slate-600 mt-2 max-w-md mx-auto leading-relaxed">
-                    Ticket Reference:{" "}
-                    <span className="font-mono font-black text-slate-900 bg-slate-100 px-2 py-0.5 rounded">
-                      LOVO-TKT-2026-9814
-                    </span>
-                    . An instrument engineer from our Pune Logistics Hub will
-                    dispatch your official quotation within 4 hours.
+                    Thank you, <span className="font-bold text-slate-900">{formData.name || "Customer"}</span>. Your inquiry has been logged. Our representative will contact you at <span className="font-bold text-slate-900">{formData.email}</span> shortly.
                   </p>
 
-                  <div className="mt-8 flex justify-center gap-3">
+                  <div className="mt-6 flex justify-center">
                     <button
                       type="button"
                       onClick={handleReset}
-                      className="px-6 py-2.5 rounded-full bg-slate-950 hover:bg-[#FFC400] text-white hover:text-black text-xs font-black uppercase tracking-wider transition-colors cursor-pointer"
+                      className="px-6 py-2.5 rounded-xl bg-[#090A0C] hover:bg-slate-800 text-white text-xs font-black uppercase tracking-wider transition-colors cursor-pointer"
                     >
-                      Submit Another Inquiry
+                      Send Another Inquiry
                     </button>
                   </div>
                 </div>
               ) : (
                 /* Inquiry Form */
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
+                  {/* Row 1: Full Name & Email Address */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="text-[11px] font-black uppercase tracking-wider text-slate-700 block mb-1">
-                        Full Name *
+                      <label className="text-[11px] font-black uppercase tracking-wider text-slate-700 block mb-1.5">
+                        FULL NAME *
                       </label>
                       <input
                         type="text"
@@ -407,13 +362,13 @@ export default function ContactPage() {
                         onChange={(e) =>
                           setFormData({ ...formData, name: e.target.value })
                         }
-                        placeholder="e.g. Vikram Sharma"
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-900 font-medium focus:outline-none focus:border-[#FFC400] bg-slate-50/50 focus:bg-white transition-colors"
+                        placeholder="e.g. Aniket Sharma"
+                        className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-slate-900 transition-colors"
                       />
                     </div>
                     <div>
-                      <label className="text-[11px] font-black uppercase tracking-wider text-slate-700 block mb-1">
-                        Corporate / Academic Email *
+                      <label className="text-[11px] font-black uppercase tracking-wider text-slate-700 block mb-1.5">
+                        EMAIL ADDRESS *
                       </label>
                       <input
                         type="email"
@@ -422,92 +377,70 @@ export default function ContactPage() {
                         onChange={(e) =>
                           setFormData({ ...formData, email: e.target.value })
                         }
-                        placeholder="vikram@company.com"
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-900 font-medium focus:outline-none focus:border-[#FFC400] bg-slate-50/50 focus:bg-white transition-colors"
+                        placeholder="e.g. aniket@enterprise.com"
+                        className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-slate-900 transition-colors"
                       />
                     </div>
                   </div>
 
+                  {/* Row 2: Phone Number & Subject */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="text-[11px] font-black uppercase tracking-wider text-slate-700 block mb-1">
-                        Phone / WhatsApp *
+                      <label className="text-[11px] font-black uppercase tracking-wider text-slate-700 block mb-1.5">
+                        PHONE NUMBER
                       </label>
                       <input
                         type="tel"
-                        required
                         value={formData.phone}
                         onChange={(e) =>
                           setFormData({ ...formData, phone: e.target.value })
                         }
-                        placeholder="+91 98000 00000"
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-900 font-medium focus:outline-none focus:border-[#FFC400] bg-slate-50/50 focus:bg-white transition-colors"
+                        placeholder="e.g. +91 9876543210"
+                        className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-slate-900 transition-colors"
                       />
                     </div>
                     <div>
-                      <label className="text-[11px] font-black uppercase tracking-wider text-slate-700 block mb-1">
-                        Company / University Name *
+                      <label className="text-[11px] font-black uppercase tracking-wider text-slate-700 block mb-1.5">
+                        SUBJECT
                       </label>
                       <input
                         type="text"
-                        required
-                        value={formData.company}
+                        value={formData.subject}
                         onChange={(e) =>
-                          setFormData({ ...formData, company: e.target.value })
+                          setFormData({ ...formData, subject: e.target.value })
                         }
-                        placeholder="e.g. Tata Motors / IIT Pune"
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-900 font-medium focus:outline-none focus:border-[#FFC400] bg-slate-50/50 focus:bg-white transition-colors"
+                        placeholder="e.g. Volume discount for 50 Wrench units"
+                        className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-slate-900 transition-colors"
                       />
                     </div>
                   </div>
 
+                  {/* Row 3: Detailed Inquiry */}
                   <div>
-                    <label className="text-[11px] font-black uppercase tracking-wider text-slate-700 block mb-1">
-                      Industry Sector / Application
-                    </label>
-                    <select
-                      value={formData.sector}
-                      onChange={(e) =>
-                        setFormData({ ...formData, sector: e.target.value })
-                      }
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-900 font-bold focus:outline-none focus:border-[#FFC400] bg-slate-50/50 focus:bg-white"
-                    >
-                      <option value="Automotive & EV">Automotive & EV Powertrain</option>
-                      <option value="Electronics Manufacturing">Electronics Manufacturing / EMS</option>
-                      <option value="Academic Labs">Academic & Higher Education R&D</option>
-                      <option value="Telecom & 5G">Telecommunications & 5G RF</option>
-                      <option value="Renewable Energy">Solar / Renewable Energy</option>
-                      <option value="Aerospace & Defense">Aerospace & Defense</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="text-[11px] font-black uppercase tracking-wider text-slate-700 block mb-1">
-                      Requirements / Target Specifications *
+                    <label className="text-[11px] font-black uppercase tracking-wider text-slate-700 block mb-1.5">
+                      DETAILED INQUIRY *
                     </label>
                     <textarea
-                      rows={4}
+                      rows={5}
                       required
-                      value={formData.requirement}
+                      value={formData.inquiry}
                       onChange={(e) =>
-                        setFormData({ ...formData, requirement: e.target.value })
+                        setFormData({ ...formData, inquiry: e.target.value })
                       }
-                      placeholder="Specify required bandwidth, number of channels, tender deadlines, or specific models like OWON XDS3302, SIGLENT SPD3303X-E..."
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-900 font-medium focus:outline-none focus:border-[#FFC400] bg-slate-50/50 focus:bg-white transition-colors"
+                      placeholder="Specify brand name, model numbers, part codes, and estimated delivery dates..."
+                      className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-slate-900 transition-colors resize-none"
                     />
                   </div>
 
-                  <button
-                    type="submit"
-                    className="w-full py-3.5 rounded-xl bg-[#FFC400] hover:bg-[#e6b000] text-black font-black text-xs uppercase tracking-wider inline-flex items-center justify-center gap-2 transition-all duration-200 shadow-md hover:shadow-lg active:scale-95 cursor-pointer"
-                  >
-                    <Send className="w-4 h-4 stroke-[2.5]" />
-                    <span>Send Inquiry to Pune Factory Desk</span>
-                  </button>
-
-                  <div className="flex items-center justify-center gap-2 pt-2 text-[11px] text-slate-400 font-medium">
-                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>100% Confidential B2B Pricing • Direct OEM Rates</span>
+                  {/* Row 4: Submit Button (Right Aligned) */}
+                  <div className="flex justify-end pt-2">
+                    <button
+                      type="submit"
+                      className="px-7 py-3 rounded-xl bg-[#090A0C] hover:bg-slate-800 text-white font-black text-xs uppercase tracking-wider inline-flex items-center gap-2 transition-colors cursor-pointer shadow-sm active:scale-98"
+                    >
+                      <span>SEND INQUIRY</span>
+                      <Send className="w-3.5 h-3.5" />
+                    </button>
                   </div>
                 </form>
               )}
@@ -517,7 +450,123 @@ export default function ContactPage() {
       </section>
 
       {/* ===================================================================== */}
-      {/* 4. NATIONWIDE SERVICE GUARANTEES STRIP                                */}
+      {/* 4. GOOGLE MAP - LOVOSIS HEADQUARTERS BENGALURU                        */}
+      {/* ===================================================================== */}
+      <section className="w-full bg-slate-100 border-t border-slate-200/80 relative">
+        <div className="relative w-full h-[400px] sm:h-[450px] lg:h-[480px]">
+          {/* Interactive Google Map iframe */}
+          <iframe
+            title="Lovosis Technology Private Limited Location"
+            src="https://maps.google.com/maps?q=Swathi+building,+Main+Road,+opp.+singapura+Garden,+Lakshmipura,+Abbigere,+Bengaluru,+Karnataka+560090&t=&z=15&ie=UTF8&iwloc=&output=embed"
+            width="100%"
+            height="100%"
+            style={{ border: 0 }}
+            allowFullScreen=""
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            className="w-full h-full grayscale-[0.08] contrast-[1.05]"
+          />
+
+          {/* Floating Location Card Overlay (Matching Reference Screenshot) */}
+          <div className="absolute top-4 left-4 sm:top-6 sm:left-6 lg:top-8 lg:left-8 z-10 max-w-[310px] sm:max-w-xs bg-white rounded-xl shadow-xl border border-slate-200/90 p-4 sm:p-5 select-none pointer-events-auto">
+            <h4 className="text-xs sm:text-[13px] font-black text-slate-900 leading-tight">
+              Lovosis Technology Private limited
+            </h4>
+            <p className="text-[11px] text-slate-600 mt-1.5 leading-snug font-medium">
+              3rd Floor, Swathi building, 4-72/2, Main Road, opp. singapura Garden, Lakshmipura, Abbigere, Bengaluru, Karnataka 560090
+            </p>
+
+            <div className="flex items-center gap-1.5 mt-2.5 text-xs">
+              <span className="font-black text-slate-900">4.9</span>
+              <div className="flex items-center text-amber-500">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />
+                ))}
+              </div>
+              <span className="text-[11px] text-slate-500 font-medium">(15)</span>
+            </div>
+
+            <div className="mt-3 pt-3 border-t border-slate-100 flex items-center gap-2">
+              <a
+                href="https://maps.google.com/?q=Swathi+building,+Main+Road,+opp.+singapura+Garden,+Lakshmipura,+Abbigere,+Bengaluru,+Karnataka+560090"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition-colors shadow-2xs"
+              >
+                <ExternalLink className="w-3.5 h-3.5" />
+                <span>Open in Maps</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ===================================================================== */}
+      {/* 5. SUBSCRIBE TO LOVOKIT WHOLESALE DIGEST (BLACK & YELLOW THEME)       */}
+      {/* ===================================================================== */}
+      <section className="relative w-full bg-[#0B0D13] text-white py-16 sm:py-20 border-t border-white/[0.08] overflow-hidden">
+        {/* Top accent line */}
+        <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#FFC400] to-transparent" />
+
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          {/* Circular Mail Icon with red/amber ring */}
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-white/5 border border-red-500/40 text-red-500 mb-6 shadow-inner">
+            <Mail className="w-6 h-6 stroke-[2]" />
+          </div>
+
+          {/* Heading */}
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white mb-3 uppercase">
+            SUBSCRIBE TO LOVOKIT{" "}
+            <span className="text-[#FFC400]">WHOLESALE DIGEST</span>
+          </h2>
+
+          {/* Subtitle */}
+          <p className="text-gray-400 text-xs sm:text-sm max-w-xl mx-auto mb-8 leading-relaxed">
+            Receive priority updates on new tool arrivals, clearance events, and OSHA compliance documents.
+          </p>
+
+          {/* Newsletter Form */}
+          {digestSubscribed ? (
+            <div className="bg-[#FFC400]/10 border border-[#FFC400]/40 rounded-xl p-4 max-w-md mx-auto flex items-center justify-center gap-2 text-[#FFC400] text-xs font-black uppercase tracking-wider animate-in fade-in">
+              <CheckCircle2 className="w-4 h-4 shrink-0 text-[#FFC400]" />
+              <span>Thank you! You are subscribed to Lovokit Wholesale Digest.</span>
+            </div>
+          ) : (
+            <form
+              onSubmit={handleDigestSubscribe}
+              className="flex flex-col sm:flex-row items-center justify-center gap-2.5 max-w-xl mx-auto"
+            >
+              <input
+                type="email"
+                required
+                value={digestEmail}
+                onChange={(e) => setDigestEmail(e.target.value)}
+                placeholder="Enter corporate or business email..."
+                className="w-full sm:flex-1 bg-[#141721] border border-white/10 rounded-full sm:rounded-l-full sm:rounded-r-none px-5 py-3 text-xs sm:text-sm text-white placeholder-gray-500 focus:outline-none focus:border-[#FFC400] transition-colors"
+              />
+              <button
+                type="submit"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#FFC400] hover:bg-[#E6B000] text-black font-black text-xs uppercase tracking-wider px-8 py-3 rounded-full sm:rounded-r-full sm:rounded-l-none transition-all shadow-md cursor-pointer shrink-0"
+              >
+                <span>SUBSCRIBE</span>
+                <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />
+              </button>
+            </form>
+          )}
+
+          {/* Trust Strip Footer */}
+          <div className="mt-8 text-[10.5px] font-black uppercase tracking-wider text-gray-500">
+            <span>NO SPAM</span>
+            <span className="mx-2.5 text-gray-700">|</span>
+            <span>UNSUBSCRIBE ANYTIME</span>
+            <span className="mx-2.5 text-gray-700">|</span>
+            <span>SECURE DATA STORAGE</span>
+          </div>
+        </div>
+      </section>
+
+      {/* ===================================================================== */}
+      {/* 6. NATIONWIDE SERVICE GUARANTEES STRIP                                */}
       {/* ===================================================================== */}
       <section className="py-12 bg-white border-y border-slate-200/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -566,7 +615,7 @@ export default function ContactPage() {
       </section>
 
       {/* ===================================================================== */}
-      {/* 5. FREQUENTLY ASKED QUESTIONS ACCORDION                              */}
+      {/* 7. FREQUENTLY ASKED QUESTIONS ACCORDION                              */}
       {/* ===================================================================== */}
       <section className="py-16 sm:py-20 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-10">
@@ -594,9 +643,8 @@ export default function ContactPage() {
                 >
                   <span>{faq.q}</span>
                   <ChevronDown
-                    className={`w-4 h-4 shrink-0 transition-transform duration-200 ${
-                      isExpanded ? "rotate-180 text-[#FFC400]" : "text-slate-400"
-                    }`}
+                    className={`w-4 h-4 shrink-0 transition-transform duration-200 ${isExpanded ? "rotate-180 text-[#FFC400]" : "text-slate-400"
+                      }`}
                   />
                 </button>
                 {isExpanded && (
@@ -611,7 +659,7 @@ export default function ContactPage() {
       </section>
 
       {/* ===================================================================== */}
-      {/* 6. GLOBAL FOOTER                                                      */}
+      {/* 8. GLOBAL FOOTER                                                      */}
       {/* ===================================================================== */}
       <Footer />
     </div>
